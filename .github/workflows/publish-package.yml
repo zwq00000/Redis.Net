@@ -1,0 +1,19 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 2.2.108
+    - name: Package
+      run: dotnet pack src/Redis.Net -o ../../publish/ -c Release --version-suffix alpha
+    - name: publish nuget
+      run: dotnet nuget push ./publish/Redis.Net.1.0.0-alpha.nupkg -k oy2kcklfixjoxppbvrca3rrw274c5ove3ce7awcz3lz53y -s nuget.org
