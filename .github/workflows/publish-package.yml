@@ -1,19 +1,24 @@
 name: publish package
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
-    
+    strategy:
+      matrix:
+        dotnet: [ '2.2.103']
     steps:
     - uses: actions/checkout@v1
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 2.2.108
+        dotnet-version: ${{ matrix.dotnet }}
     - name: Package
-      run: dotnet pack src/Redis.Net -o ../../publish/ -c Release --version-suffix alpha
+      run: dotnet pack src/Redis.Net -o ../../publish/ -c Release
     - name: publish nuget
-      run: dotnet nuget push ./publish/Redis.Net.1.0.0-alpha.nupkg -k oy2kcklfixjoxppbvrca3rrw274c5ove3ce7awcz3lz53y -s nuget.org
+      run: dotnet nuget push ./publish/Redis.Net.1.0.0-alpha.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
