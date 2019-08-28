@@ -9,9 +9,9 @@
     <Company>XiGe Digi Tech CO.</Company>
     <Product>CCHP.VTS</Product>
     <Description>VTS Redis Client</Description>
-    <PackageProjectUrl>https://dev.azure.com/VTSMIS/CCHP.VTS</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/zwq00000/Redis.Net</PackageProjectUrl>
     <PackageTags>AIS;VTS;Redis</PackageTags>
-    <RepositoryUrl>https://VTSMIS@dev.azure.com/VTSMIS/CCHP.VTS/_git/CCHP.VTS.AisFusion</RepositoryUrl>
+    <RepositoryUrl>https://github.com/zwq00000/Redis.Net.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
