@@ -17,7 +17,3 @@ jobs:
       run: dotnet build --configuration Release
     - name: Unit tests
       run: dotnet test
-    - name: Package
-      run: dotnet pack src/Redis.Net -o ../../publish/ -c Release --version-suffix alpha
-    - name: publish nuget
-      run: dotnet nuget push ./publish/Redis.Net.1.0.0-alpha.nupkg -k oy2kcklfixjoxppbvrca3rrw274c5ove3ce7awcz3lz53y -s nuget.org
