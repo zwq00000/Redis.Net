@@ -8,7 +8,7 @@ namespace Redis.Net {
     /// <summary>
     /// Redis Set for entityId:{tags} set
     /// </summary>
-    public class RedisTagsSet: RedisGroupKey {
+    public class RedisTagsSet: RedisMutiKey {
         private readonly IDatabase _database;
 
         /// <summary>
@@ -17,7 +17,7 @@ namespace Redis.Net {
         private const string DefaultKey = "Tags:";
 
 
-        public RedisTagsSet(IDatabase database, string prefixKey = DefaultKey):base(database,prefixKey) {
+        public RedisTagsSet(IDatabase database, string baseKey = DefaultKey):base(database,baseKey) {
             this._database = database;
         }
 

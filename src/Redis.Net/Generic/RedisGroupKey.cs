@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Redis.Net.Generic;
 using StackExchange.Redis;
 
-namespace Redis.Net {
+namespace Redis.Net.Generic {
     /// <summary>
     /// Redis 分组容器基类
     /// </summary>

@@ -7,7 +7,7 @@ using StackExchange.Redis;
 
 namespace Redis.Net.Generic {
     /// <summary>
-    /// Redis HashSet Generic Warpper
+    /// Redis HashSet Warpper
     /// </summary>
     public class ReadOnlyRedisHashSet<TKey, TValue> : AbstracRedisKey, IReadOnlyDictionary<TKey, TValue>
         where TKey : IConvertible where TValue : IConvertible {

@@ -8,17 +8,17 @@ using StackExchange.Redis;
 
 namespace Redis.Net.Generic {
     /// <summary>
-    /// Redis HashSet Generic Warpper
+    /// Redis HashSet Warpper
     /// </summary>
-    public class ReadOnlyEntrySet<TKey, TValue> : RedisGroupKey<TKey>, IReadOnlyDictionary<TKey, TValue>
+    public class ReadOnlyEntrySet<TKey, TValue> : RedisMutiKey<TKey>, IReadOnlyDictionary<TKey, TValue>
         where TKey : IConvertible where TValue : new() {
 
         /// <summary>
         /// 构造方法
         /// </summary>
         /// <param name="database">Redis Database</param>
-        /// <param name="prefixKey">Redis Key Name</param>
-        public ReadOnlyEntrySet(IDatabase database, string prefixKey) : base(database, prefixKey) {
+        /// <param name="baseKey">Redis Key Name</param>
+        public ReadOnlyEntrySet(IDatabase database, string baseKey) : base(database, baseKey) {
         }
 
         #region Implementation of IEnumerable
@@ -28,7 +28,7 @@ namespace Redis.Net.Generic {
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() {
             foreach (var key in Keys) {
                 var setKey = GetEntryKey(key);
-                var value = Database.HashGetEntity<TValue>(setKey);
+                var value = RedisHashSetExtensions.HashGetEntity<TValue>(Database, setKey);
                 yield return new KeyValuePair<TKey, TValue>(key, value);
             }
         }
@@ -54,7 +54,7 @@ namespace Redis.Net.Generic {
 
             if (base.ContainsKey(key)) {
                 var setKey = GetEntryKey(key);
-                value = Database.HashGetEntity<TValue>(setKey);
+                value = RedisHashSetExtensions.HashGetEntity<TValue>(Database, setKey);
                 return true;
             }
             value = default(TValue);
@@ -73,23 +73,24 @@ namespace Redis.Net.Generic {
                 }
                 return default(TValue);
             }
-            set => Database.HashSet(GetEntryKey(key), value.ToHashEntries().ToArray());
+            set => Database.HashSet(GetEntryKey(key), RedisHashSetExtensions.ToHashEntries(value).ToArray());
         }
 
         /// <summary>Gets an enumerable collection that contains the keys in the read-only dictionary.</summary>
         /// <returns>An enumerable collection that contains the keys in the read-only dictionary.</returns>
         IEnumerable<TKey> IReadOnlyDictionary<TKey, TValue>.Keys => base.Keys;
 
+        /// <summary>Gets an enumerable collection that contains the keys in the read-only dictionary.</summary>
+        /// <returns>An enumerable collection that contains the keys in the read-only dictionary.</returns>
+        //public IEnumerable<TKey> Keys => base.Keys;
 
-        /// <summary>
-        /// Gets an enumerable collection that contains the values in the read-only dictionary.
-        /// </summary>
+        /// <summary>Gets an enumerable collection that contains the values in the read-only dictionary.</summary>
         /// <returns>An enumerable collection that contains the values in the read-only dictionary.</returns>
         public IEnumerable<TValue> Values {
             get {
                 foreach (var key in Keys) {
                     var setKey = GetEntryKey(key);
-                    yield return Database.HashGetEntity<TValue>(setKey);
+                    yield return RedisHashSetExtensions.HashGetEntity<TValue>(Database, setKey);
                 }
             }
         }

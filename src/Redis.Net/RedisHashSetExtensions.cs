@@ -6,85 +6,72 @@ using System.Reflection;
 using System.Threading.Tasks;
 using StackExchange.Redis;
 
-namespace Redis.Net.Generic {
+namespace Redis.Net {
     /// <summary>
     /// Redis HashSet 扩展方法
     /// </summary>
-    internal static class RedisEntryExtensions {
+    public static class RedisHashSetExtensions {
 
         /// <summary>
-        /// Get Entry from Redis Hashset
+        /// 
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="dataBase"></param>
         /// <param name="key"></param>
         /// <returns></returns>
 
-        public static async Task<T> HashGetEntityAsync<T>(this IDatabase dataBase, RedisKey key) where T : new() {
+        public static async Task<T> HashGetEntityAsync<T> (this IDatabase dataBase, RedisKey key) where T : new () {
             if (dataBase == null) {
-                throw new ArgumentNullException(nameof(dataBase));
+                throw new ArgumentNullException (nameof (dataBase));
             }
 
-            var properties = GetProperties<T>().ToArray();
-            var values = await dataBase.HashGetAsync(key, properties.Select(p => (RedisValue)p.Name).ToArray());
-            var instance = new T();
+            var properties = GetProperties<T> ().ToArray ();
+            var values = await dataBase.HashGetAsync (key, properties.Select (p => (RedisValue) p.Name).ToArray ());
+            var instance = new T ();
             for (var i = 0; i < values.Length; i++) {
                 var prop = properties[i];
                 var val = values[i];
 
                 if (val.HasValue) {
-                    prop.SetValue(instance, ((IConvertible)val).ToType(prop.PropertyType, CultureInfo.InvariantCulture));
+                    prop.SetValue (instance, ((IConvertible) val).ToType (prop.PropertyType, CultureInfo.InvariantCulture));
                 }
             }
 
             return instance;
         }
 
-        /// <summary>
-        /// Get Entry from Redis Hashset
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="dataBase"></param>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public static T HashGetEntity<T>(this IDatabase dataBase, RedisKey key) where T : new() {
+        public static T HashGetEntity<T> (this IDatabase dataBase, RedisKey key) where T : new () {
             if (dataBase == null) {
-                throw new ArgumentNullException(nameof(dataBase));
+                throw new ArgumentNullException (nameof (dataBase));
             }
 
-            var properties = GetProperties<T>().ToArray();
-            var values = dataBase.HashGet(key, properties.Select(p => (RedisValue)p.Name).ToArray());
-            var instance = new T();
+            var properties = GetProperties<T> ().ToArray ();
+            var values = dataBase.HashGet (key, properties.Select (p => (RedisValue) p.Name).ToArray ());
+            var instance = new T ();
             for (int i = 0; i < values.Length; i++) {
                 var prop = properties[i];
                 var val = values[i];
 
                 if (val.HasValue) {
-                    prop.SetValue(instance, ((IConvertible)val).ToType(prop.PropertyType, CultureInfo.InvariantCulture));
+                    prop.SetValue (instance, ((IConvertible) val).ToType (prop.PropertyType, CultureInfo.InvariantCulture));
                 }
             }
 
             return instance;
         }
 
-        /// <summary>
-        /// Convert HashEnties to entity instance
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="entries"></param>
-        /// <returns></returns>
-        public static T ToInstance<T>(this IEnumerable<HashEntry> entries) where T : new() {
-            var properties = GetProperties<T>().ToArray();
-            var instance = new T();
+        public static T ToInstance<T> (this IEnumerable<HashEntry> entries) where T : new () {
+            var properties = GetProperties<T> ().ToArray ();
+            var instance = new T ();
             foreach (var entry in entries) {
                 var value = entry.Value;
                 if (!value.HasValue) {
                     continue;
                 }
-                var prop = properties.FirstOrDefault(p => p.Name == entry.Name);
+                var prop = properties.FirstOrDefault (p => p.Name == entry.Name);
                 if (prop != null) {
-                    prop.SetValue(instance,
-                        ((IConvertible)value).ToType(prop.PropertyType, CultureInfo.InvariantCulture));
+                    prop.SetValue (instance,
+                        ((IConvertible) value).ToType (prop.PropertyType, CultureInfo.InvariantCulture));
                 }
             }
 
@@ -97,12 +84,12 @@ namespace Redis.Net.Generic {
         /// <typeparam name="T"></typeparam>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public static IEnumerable<HashEntry> ToHashEntries<T>(this T entity) {
-            var properties = GetProperties<T>();
+        public static IEnumerable<HashEntry> ToHashEntries<T> (this T entity) {
+            var properties = GetProperties<T> ();
             foreach (var property in properties) {
-                var value = property.GetValue(entity);
-                if (TryParse(value, out var redisValue)) {
-                    yield return new HashEntry(property.Name, redisValue);
+                var value = property.GetValue (entity);
+                if (TryParse (value, out var redisValue)) {
+                    yield return new HashEntry (property.Name, redisValue);
                 }
             }
         }
@@ -113,24 +100,18 @@ namespace Redis.Net.Generic {
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        private static PropertyInfo[] GetProperties<T>() {
-            return PropertiesCache<T>.GetProperties();
+        private static PropertyInfo[] GetProperties<T> () {
+            return PropertiesCache<T>.GetProperties ();
         }
 
-        /// <summary>
-        /// parse object to <see cref="RedisValue"/>
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        private static bool TryParse(object obj, out RedisValue value) {
+        private static bool TryParse (object obj, out RedisValue value) {
             if (obj == null) {
                 value = RedisValue.Null;
                 return false;
             }
 
-            if (obj.GetType().IsEnum) {
-                value = (int)obj;
+            if (obj.GetType ().IsEnum) {
+                value = (int) obj;
                 return true;
             }
             switch (obj) {
@@ -178,13 +159,25 @@ namespace Redis.Net.Generic {
             return true;
         }
 
-
         static class PropertiesCache<T> {
             private static PropertyInfo[] _cache;
 
-            public static PropertyInfo[] GetProperties() {
-                return _cache ?? (_cache = typeof(T).GetRuntimeProperties().Where(p =>
-                           p.PropertyType.IsValueType || p.PropertyType == typeof(string) || p.PropertyType.IsEnum).ToArray());
+            public static PropertyInfo[] GetProperties () {
+                if (_cache == null) {
+                    var type = typeof(T);
+                    var props = GetProperties (type);
+                    if (type.IsInterface) {
+                        props = props.Concat (type.GetInterfaces ().SelectMany (i => GetProperties (i)));
+                    }
+                    _cache = props.ToArray ();
+                }
+
+                return _cache;
+            }
+
+            private static IEnumerable<PropertyInfo> GetProperties (Type type) {
+                return type.GetRuntimeProperties ()
+                    .Where (p => p.PropertyType.IsValueType || p.PropertyType == typeof (string) || p.PropertyType.IsEnum);
             }
         }
     }

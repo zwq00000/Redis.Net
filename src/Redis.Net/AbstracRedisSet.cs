@@ -105,12 +105,6 @@ namespace Redis.Net {
             Database.KeyExpire(SetKey, expiry);
         }
 
-        /// <summary>
-        /// Set a timeout on key. After the timeout has expired, the key will automatically be deleted. 
-        /// A key with an associated timeout is said to be volatile in Redis terminology.
-        /// </summary>
-        /// <param name="expiry"></param>
-        /// <returns></returns>
         private async Task<bool> SetExpireAsync(TimeSpan expiry) {
             return await Database.KeyExpireAsync(SetKey, expiry);
         }
@@ -134,12 +128,13 @@ namespace Redis.Net {
         /// <summary>
         /// 重命名 Set Key
         /// </summary>
-        /// <param name="newKey"></param>
+        /// <remarks>Renames key to newkey. It returns an error when the source and destination names are the same, or when key does not exist.</remarks>
+        /// <param name="newKey">The key to rename to.</param>
         protected void Rename(string newKey) {
             if (Database.KeyRename(SetKey, newKey, When.NotExists)) {
                 SetKey = newKey;
             } else {
-                throw new ArgumentException($"Rename Fail,newKey '{newKey}' is existed");
+                throw new ArgumentException($"Redis Key rename fail,newKey '{newKey}' is existed");
             }
         }
     }

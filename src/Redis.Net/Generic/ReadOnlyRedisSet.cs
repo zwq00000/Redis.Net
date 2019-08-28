@@ -38,9 +38,6 @@ namespace Redis.Net.Generic {
         /// <returns></returns>
         public bool Contains(TValue value) => Database.SetContains(SetKey, RedisValue.Unbox(value));
 
-        /// <summary>
-        /// Get all Set Values
-        /// </summary>
         public ICollection<TValue> Values {
             get { return Array.ConvertAll(Database.SetMembers(SetKey), ConvertValue); }
         }

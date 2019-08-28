@@ -15,8 +15,8 @@ namespace Redis.Net.Generic {
         /// 构造方法
         /// </summary>
         /// <param name="database">Redis Database</param>
-        /// <param name="prefixKey">Redis Key Name</param>
-        public RedisEntrySet(IDatabase database, string prefixKey) : base(database, prefixKey) {
+        /// <param name="baseKey">Redis Key Name</param>
+        public RedisEntrySet(IDatabase database, string baseKey) : base(database, baseKey) {
         }
 
         #region Implementation of ICollection<KeyValuePair<TKey,TValue>>
@@ -26,7 +26,7 @@ namespace Redis.Net.Generic {
         /// <exception cref="T:System.NotSupportedException">The <see cref="T:System.Collections.Generic.ICollection`1"></see> is read-only.</exception>
         public void Add(KeyValuePair<TKey, TValue> item) {
             var setKey = GetEntryKey(item.Key);
-            Database.HashSet(setKey, item.Value.ToHashEntries().ToArray());
+            Database.HashSet(setKey, RedisHashSetExtensions.ToHashEntries(item.Value).ToArray());
             OnAdded(item.Key);
         }
 
@@ -89,7 +89,7 @@ namespace Redis.Net.Generic {
         /// <exception cref="T:System.NotSupportedException">The <see cref="T:System.Collections.Generic.IDictionary`2"></see> is read-only.</exception>
         public void Add(TKey key, TValue value) {
             var setKey = GetEntryKey(key);
-            Database.HashSet(setKey, value.ToHashEntries().ToArray());
+            Database.HashSet(setKey, RedisHashSetExtensions.ToHashEntries(value).ToArray());
             OnAdded(key);
         }
 
@@ -109,10 +109,8 @@ namespace Redis.Net.Generic {
         /// <param name="key"></param>
         /// <param name="entries"></param>
         /// <returns></returns>
-        public Task<long> AddAsync(IBatch batch, TKey key, IEnumerable<HashEntry> entries) {
-            var setKey = GetEntryKey(key);
-            batch.HashSetAsync(setKey, entries.ToArray());
-            return OnAddedAsync(batch, key);
+        public Task AddAsync(IBatch batch, TKey key, IEnumerable<HashEntry> entries) {
+            return base.AddHashSetBatch(batch,key,entries);
         }
 
         /// <summary>
@@ -122,10 +120,8 @@ namespace Redis.Net.Generic {
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public Task<long> AddAsync(IBatch batch, TKey key, TValue value) {
-            var setKey = GetEntryKey(key);
-            batch.HashSetAsync(setKey, value.ToHashEntries().ToArray());
-            return OnAddedAsync(batch, key);
+        public Task AddAsync(IBatch batch, TKey key, TValue value) {
+            return base.AddHashSetBatch(batch,key,RedisHashSetExtensions.ToHashEntries(value));
         }
 
         /// <summary>
@@ -135,9 +131,23 @@ namespace Redis.Net.Generic {
         /// <param name="key"></param>
         /// <returns></returns>
         public Task<bool> RemoveAsync(IBatch batch, TKey key) {
-            var setKey = GetEntryKey(key);
-            batch.KeyDeleteAsync(setKey);
             return RemoveBatch(batch,key);
+        }
+
+        /// <summary>
+        /// 设置实体集合超时回收时间 的批处理方法
+        /// </summary>
+        /// <param name="batch"></param>
+        /// <param name="key">The key to set the expiration for.</param>
+        /// <param name="expiry">The exact date to expiry to set.</param>
+        /// <remarks>
+        /// Set a timeout on key. After the timeout has expired, the key will automatically
+        ///     be deleted. A key with an associated timeout is said to be volatile in Redis
+        ///     terminology.
+        ///</remarks>
+        ///  <returns></returns>
+        public Task<bool> ExpireAsync(IBatch batch, TKey key,TimeSpan? expiry) {
+            return ExpireBatch(batch,key,expiry);
         }
 
         #endregion

@@ -12,8 +12,6 @@ namespace Redis.Net {
         public GeoHashSet(IDatabase database, string setKey) : base(database, setKey) {
         }
 
-
-
         /// <summary>
         /// Add the specified member to the set stored at key. 
         /// Specified members that are already a member of this set are ignored. 
@@ -78,19 +76,10 @@ namespace Redis.Net {
             return Database.GeoRemove(SetKey, member);
         }
 
-        /// <summary>
-        /// 从 GeoHash set 中移除一个位置的异步方法
-        /// </summary>
-        /// <param name="member"></param>
-        /// <returns></returns>
         public async Task<bool> RemoveAsync(RedisValue member) {
             return await Database.GeoRemoveAsync(SetKey, member);
         }
 
-        /// <summary>
-        /// 删除 GeoHash Set
-        /// </summary>
-        /// <returns></returns>
         public bool Clear() {
             return Database.KeyDelete(SetKey);
         }
