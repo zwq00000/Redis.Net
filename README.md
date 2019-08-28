@@ -3,38 +3,38 @@ Redis.Net A Redis Collection/Set Wapper
 C# Wapper Redis Collection and Hashset
 
 
-# ¸ÅÊö
-ÏîÄ¿ÒÀÀµ StackExchange.Redis Ìá¹©»ù´¡ Api,¾­¹ı¼òµ¥µÄ·â×°·½±ãÊ¹ÓÃ.
+# æ¦‚è¿°
+é¡¹ç›®ä¾èµ– StackExchange.Redis æä¾›åŸºç¡€ Api,ç»è¿‡ç®€å•çš„å°è£…æ–¹ä¾¿ä½¿ç”¨.
 
-ÈİÆ÷ ·ÖÎª Ö»¶ÁÈİÆ÷ºÍ¿ÉĞ´ÈİÆ÷,±ÈÈç ReadonlyRedisSet/RedisSet.
+å®¹å™¨ åˆ†ä¸º åªè¯»å®¹å™¨å’Œå¯å†™å®¹å™¨,æ¯”å¦‚ ReadonlyRedisSet/RedisSet.
 
-## Redis ÈİÆ÷
+## Redis å®¹å™¨
 
-ÊıÖµÀàĞÍÎª ReidsValue
+æ•°å€¼ç±»å‹ä¸º ReidsValue
 
 
-## ·ºĞÍÈİÆ÷
+## æ³›å‹å®¹å™¨
 
 - RedisSet<T>
 - RedisHashSet<T>
 - RedisSortedSet<T>
 - ReadonlyEntrySet<TEntry> / RedisEntrySet<TEntry>
 
-## ·Ö×éÈİÆ÷¹ÜÀí
+## åˆ†ç»„å®¹å™¨ç®¡ç†
 
 
 
 
-## Ö§³ÖµÄÀàĞÍ
+## æ”¯æŒçš„ç±»å‹
 
-### »ù±¾ÀàĞÍ
-·ºĞÍÈİÆ÷ÖĞÖ§³ÖµÄ»ù±¾ÀàĞÍºÍ Redis Ö§³ÖµÄÊı¾İÀàĞÍÒ»ÖÂ.
-×ª»»·½·¨ ²Î¿¼ RedisValue ×ª»»·½·¨,ÒªÇó »ù±¾ÀàĞÍĞèÒªÖ§³Ö IConverable ½Ó¿Ú.
+### åŸºæœ¬ç±»å‹
+æ³›å‹å®¹å™¨ä¸­æ”¯æŒçš„åŸºæœ¬ç±»å‹å’Œ Redis æ”¯æŒçš„æ•°æ®ç±»å‹ä¸€è‡´.
+è½¬æ¢æ–¹æ³• å‚è€ƒ RedisValue è½¬æ¢æ–¹æ³•,è¦æ±‚ åŸºæœ¬ç±»å‹éœ€è¦æ”¯æŒ IConverable æ¥å£.
 
-### ÊµÌå¶ÔÏóÀàĞÍ
-RedisEntrySet ÊÇÒ»ÖÖ×éºÏÀàĞÍ,Í¨¹ı Redis Hashset ´æ´¢ÊôĞÔ¼ü/Öµ¶Ô (KeyValuePair)
+### å®ä½“å¯¹è±¡ç±»å‹
+RedisEntrySet æ˜¯ä¸€ç§ç»„åˆç±»å‹,é€šè¿‡ Redis Hashset å­˜å‚¨å±æ€§é”®/å€¼å¯¹ (KeyValuePair)
 
-## ÊµÏÖµÄ½Ó¿Ú
+## å®ç°çš„æ¥å£
  
  - ReadOnlyRedisSet<TValue> : IReadOnlyCollection<TValue>
 
