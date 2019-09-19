@@ -243,6 +243,8 @@ namespace Redis.Net {
 
         #endregion
 
+        /// <summary>Gets an enumerable collection that contains the keys in the read-only dictionary.</summary>
+        /// <returns>An enumerable collection that contains the keys in the read-only dictionary.</returns>
         public ICollection<TKey> Keys => IndexSet.Values;
 
         /// <summary>

@@ -12,6 +12,8 @@ namespace Redis.Net {
         public GeoHashSet(IDatabase database, string setKey) : base(database, setKey) {
         }
 
+
+
         /// <summary>
         /// Add the specified member to the set stored at key. 
         /// Specified members that are already a member of this set are ignored. 

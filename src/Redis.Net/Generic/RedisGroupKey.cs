@@ -10,6 +10,11 @@ namespace Redis.Net.Generic {
     /// </summary>
     public abstract class RedisGroupKey<TKey> where TKey:IConvertible {
         /// <summary>
+        /// Internal Index Set Name
+        /// </summary>
+        private const string InternalIndexSetName = "@__SetIndex";
+
+        /// <summary>
         /// 默认 Redis Key 前缀, ':' 字符结尾
         /// </summary>
         public readonly RedisKey PrefixKey;
@@ -25,12 +30,12 @@ namespace Redis.Net.Generic {
             if (string.IsNullOrWhiteSpace(prefixKey)) {
                 throw new ArgumentNullException(nameof(prefixKey));
             }
-            this.Database = database;
+            Database = database;
             if (!prefixKey.EndsWith(":")) {
                 prefixKey = prefixKey + ":";
             }
-            this.PrefixKey = prefixKey;
-            this._indexSet = new RedisSet<TKey>(database, PrefixKey.Append("@__SetIndex"));
+            PrefixKey = prefixKey;
+            _indexSet = new RedisSet<TKey>(database, PrefixKey.Append(InternalIndexSetName));
         }
 
         /// <summary>
@@ -40,6 +45,9 @@ namespace Redis.Net.Generic {
         /// <param name="key"></param>
         /// <returns></returns>
         protected RedisKey GetEntryKey(TKey key) {
+            if (key == null) {
+                throw new ArgumentNullException(nameof(key));
+            }
             return PrefixKey.Append(key.ToString());
         }
 
@@ -49,6 +57,11 @@ namespace Redis.Net.Generic {
             return Database.KeyDelete(setKey);
         }
 
+        /// <summary>
+        /// async remove key from redis
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         protected async Task<bool> RemoveAsync(TKey key) {
             var setKey = GetEntryKey(key);
             await _indexSet.RemoveAsync(key);
@@ -122,7 +135,7 @@ namespace Redis.Net.Generic {
         /// </summary>
         /// <returns></returns>
         protected RedisKey[] GetKeys() {
-            return Database.GetKeys(this.PrefixKey);
+            return Database.GetKeys(PrefixKey);
         }
 
         /// <summary>
@@ -130,7 +143,7 @@ namespace Redis.Net.Generic {
         /// </summary>
         /// <returns></returns>
         protected async Task<RedisKey[]> GetKeysAsync() {
-            return await Database.GetKeysAsync(this.PrefixKey);
+            return await Database.GetKeysAsync(PrefixKey);
         }
 
         public int Count => IndexSet.Count;

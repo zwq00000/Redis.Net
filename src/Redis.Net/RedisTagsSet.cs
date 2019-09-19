@@ -18,7 +18,7 @@ namespace Redis.Net {
 
 
         public RedisTagsSet(IDatabase database, string baseKey = DefaultKey):base(database,baseKey) {
-            this._database = database;
+            _database = database;
         }
 
         private RedisValue[] FilterTags(string[] tags) {
@@ -66,7 +66,7 @@ namespace Redis.Net {
         /// <param name="entityId"></param>
         /// <returns></returns>
         public virtual bool RemoveTags(string entityId) {
-            return base.Remove(entityId);
+            return Remove(entityId);
         }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace Redis.Net {
         /// <param name="entityId"></param>
         /// <returns></returns>
         public virtual async Task<bool> RemoveTagsAsync(string entityId) {
-            return await base.RemoveAsync(entityId);
+            return await RemoveAsync(entityId);
         }
 
         /// <summary>

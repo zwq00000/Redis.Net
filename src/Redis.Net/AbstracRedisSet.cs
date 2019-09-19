@@ -15,12 +15,12 @@ namespace Redis.Net {
         /// <param name="database">Redis Database</param>
         /// <param name="setKey">Redis Key Name</param>
         protected AbstracRedisKey(IDatabase database, string setKey) {
-            Database = database ?? throw new ArgumentNullException(nameof(database));
+            this.Database = database ?? throw new ArgumentNullException(nameof(database));
 
             if (string.IsNullOrEmpty(setKey)) {
                 throw new ArgumentNullException(nameof(setKey));
             }
-            SetKey = setKey;
+            this.SetKey = setKey;
         }
 
         /// <summary>
@@ -82,10 +82,10 @@ namespace Redis.Net {
         public TimeSpan? Expire {
             get { return _expire ?? (_expire = Database.KeyTimeToLive(SetKey)); }
             set {
-                if (Equals(_expire, value)) {
+                if (object.Equals(_expire, value)) {
                     return;
                 }
-                _expire = value;
+                this._expire = value;
                 Database.KeyExpire(SetKey, value);
             }
         }
@@ -128,13 +128,12 @@ namespace Redis.Net {
         /// <summary>
         /// 重命名 Set Key
         /// </summary>
-        /// <remarks>Renames key to newkey. It returns an error when the source and destination names are the same, or when key does not exist.</remarks>
-        /// <param name="newKey">The key to rename to.</param>
+        /// <param name="newKey"></param>
         protected void Rename(string newKey) {
             if (Database.KeyRename(SetKey, newKey, When.NotExists)) {
-                SetKey = newKey;
+                this.SetKey = newKey;
             } else {
-                throw new ArgumentException($"Redis Key rename fail,newKey '{newKey}' is existed");
+                throw new ArgumentException($"Rename Fail,newKey '{newKey}' is existed");
             }
         }
     }

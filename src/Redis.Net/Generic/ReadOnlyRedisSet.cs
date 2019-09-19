@@ -62,7 +62,7 @@ namespace Redis.Net.Generic {
         public async Task<bool> ContainsAsync(TValue value) => await Database.SetContainsAsync(SetKey, Unbox(value));
 
         /// <summary>
-        /// Async method for Values
+        /// Async method for Set Values
         /// </summary>
         /// <returns></returns>
         public async Task<IEnumerable<TValue>> GetValuesAsync() {

@@ -6,9 +6,9 @@ using StackExchange.Redis;
 
 namespace Redis.Net.Generic {
     /// <summary>
-    /// Redis HashSet Warpper
+    /// Redis HashSet To Entity Warpper
     /// </summary>
-    public class RedisEntrySet<TKey, TValue> : ReadOnlyEntrySet<TKey, TValue>, IDictionary<TKey, TValue>
+    public class RedisEntitySet<TKey, TValue> : ReadOnlyEntitySet<TKey, TValue>, IDictionary<TKey, TValue>
         where TKey : IConvertible where TValue : new() {
 
         /// <summary>
@@ -16,7 +16,7 @@ namespace Redis.Net.Generic {
         /// </summary>
         /// <param name="database">Redis Database</param>
         /// <param name="baseKey">Redis Key Name</param>
-        public RedisEntrySet(IDatabase database, string baseKey) : base(database, baseKey) {
+        public RedisEntitySet(IDatabase database, string baseKey) : base(database, baseKey) {
         }
 
         #region Implementation of ICollection<KeyValuePair<TKey,TValue>>
@@ -148,6 +148,16 @@ namespace Redis.Net.Generic {
         ///  <returns></returns>
         public Task<bool> ExpireAsync(IBatch batch, TKey key,TimeSpan? expiry) {
             return ExpireBatch(batch,key,expiry);
+        }
+
+        /// <summary>
+        /// 清理全部集合的批量方法
+        /// </summary>
+        /// <param name="batch"></param>
+        /// <returns></returns>
+        public Task<long> ClearAsync(IBatch batch) {
+            var keys = Keys.ToArray();
+            return RemoveBatch(batch,keys);
         }
 
         #endregion

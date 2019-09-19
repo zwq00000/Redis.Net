@@ -49,6 +49,55 @@ namespace Redis.Net.Generic {
             return Database.SetRemove(SetKey, values);
         }
 
+        #region SetMove
+
+        /// <summary>
+        /// Move member from the set at source to the set at destination. This operation is atomic. In every given moment the element will appear to be a member of source or destination for other clients.
+        /// When the specified element already exists in the destination set, it is only removed from the source set.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="targetSet"></param>
+        /// <returns></returns>
+        public bool MoveTo(TValue value, RedisSet<TValue> targetSet) {
+            return Database.SetMove(SetKey, targetSet.SetKey, RedisValue.Unbox(value));
+        }
+
+        /// <summary>
+        /// Move member from the set at source to the set at destination. This operation is atomic. In every given moment the element will appear to be a member of source or destination for other clients.
+        /// When the specified element already exists in the destination set, it is only removed from the source set.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="targetSet"></param>
+        /// <returns></returns>
+        public bool MoveTo(TValue value, RedisKey targetSet) {
+            return Database.SetMove(SetKey, targetSet, RedisValue.Unbox(value));
+        }
+
+        /// <summary>
+        /// Move member from the set at source to the set at destination. This operation is atomic. In every given moment the element will appear to be a member of source or destination for other clients.
+        /// When the specified element already exists in the destination set, it is only removed from the source set.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="targetSet"></param>
+        /// <returns></returns>
+        public async Task<bool> MoveToAsync(TValue value, RedisKey targetSet) {
+            return await Database.SetMoveAsync(SetKey, targetSet, RedisValue.Unbox(value));
+        }
+
+        /// <summary>
+        /// Move member from the set at source to the set at destination. This operation is atomic. In every given moment the element will appear to be a member of source or destination for other clients.
+        /// When the specified element already exists in the destination set, it is only removed from the source set.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="targetSet"></param>
+        /// <returns></returns>
+        public async Task<bool> MoveToAsync(TValue value, RedisSet<TValue> targetSet) {
+            return await Database.SetMoveAsync(SetKey, targetSet.SetKey, RedisValue.Unbox(value));
+        }
+
+        #endregion
+
+
         /// <summary>Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1"></see> is read-only.</summary>
         /// <returns>true if the <see cref="T:System.Collections.Generic.ICollection`1"></see> is read-only; otherwise, false.</returns>
         public bool IsReadOnly {
