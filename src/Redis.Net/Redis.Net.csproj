@@ -4,29 +4,27 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Redis.Net</RootNamespace>
     <SharedFrameworkVersion>2.2.0</SharedFrameworkVersion>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>zwq00000@hotmail.com</Authors>
-    <Company>XiGe Digi Tech CO.</Company>
-    <Product>CCHP.VTS</Product>
-    <Description>VTS Redis Client</Description>
-    <PackageProjectUrl>https://github.com/zwq00000/Redis.Net</PackageProjectUrl>
-    <PackageTags>AIS;VTS;Redis</PackageTags>
-    <RepositoryUrl>https://github.com/zwq00000/Redis.Net.git</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
-    <Version>1.0.1</Version>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="test\**" />
-    <EmbeddedResource Remove="test\**" />
-    <None Remove="test\**" />
-  </ItemGroup>
+  <PropertyGroup>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.1</Version>
+    <VersionSuffix>$(VersionSuffix)</VersionSuffix>
+    <Authors>zwq00000@hotmail.com</Authors>
+    <Company>XiGe Digi Tech CO.</Company>
+    <Product>CCHP.VTS</Product>
+    <Description>VTS Redis Client</Description>
+    <PackageProjectUrl>https://github.com/zwq00000/Redis.Net</PackageProjectUrl>
+    <PackageTags>Redis;.NetCore</PackageTags>
+    <RepositoryUrl>https://github.com/zwq00000/Redis.Net.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
