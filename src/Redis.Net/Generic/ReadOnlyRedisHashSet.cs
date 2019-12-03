@@ -1,14 +1,14 @@
+using StackExchange.Redis;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using StackExchange.Redis;
 
 namespace Redis.Net.Generic {
     /// <summary>
-    /// Readonly Redis HashSet Warpper
+    /// Redis HashSet Warpper
     /// </summary>
     public class ReadOnlyRedisHashSet<TKey, TValue> : AbstracRedisKey, IReadOnlyDictionary<TKey, TValue>
         where TKey : IConvertible where TValue : IConvertible {

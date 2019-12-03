@@ -1,10 +1,10 @@
+using StackExchange.Redis;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using StackExchange.Redis;
 
 namespace Redis.Net.Generic {
 
@@ -62,7 +62,7 @@ namespace Redis.Net.Generic {
         public async Task<bool> ContainsAsync(TValue value) => await Database.SetContainsAsync(SetKey, Unbox(value));
 
         /// <summary>
-        /// Async method for Set Values
+        /// Async method for Values
         /// </summary>
         /// <returns></returns>
         public async Task<IEnumerable<TValue>> GetValuesAsync() {

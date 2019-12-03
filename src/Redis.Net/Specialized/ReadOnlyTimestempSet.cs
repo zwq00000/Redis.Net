@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Redis.Net;
 using Redis.Net.Generic;
 using StackExchange.Redis;
 
@@ -78,9 +79,10 @@ namespace Redis.Net.Specialized {
         /// 查找超时船舶的异步方法
         /// </summary>
         /// <param name="time">过期期限</param>
+        /// <param name="order">排序方法</param>
         /// <returns></returns>
-        public async Task<IEnumerable<TKey>> GetByOverTimeAsync(DateTime time) {
-            var result = await SortedSet.GetRangeByScoreAsync(0, time.ToTimestamp(), Exclude.None, Order.Descending);
+        public async Task<IEnumerable<TKey>> GetByOverTimeAsync(DateTime time, Order order = Order.Ascending) {
+            var result = await SortedSet.GetRangeByScoreAsync(0, time.ToTimestamp(), Exclude.None, order);
             return result;
         }
 

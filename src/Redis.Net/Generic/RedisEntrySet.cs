@@ -6,9 +6,9 @@ using StackExchange.Redis;
 
 namespace Redis.Net.Generic {
     /// <summary>
-    /// Redis HashSet To Entity Warpper
+    /// Redis HashSet Warpper
     /// </summary>
-    public class RedisEntitySet<TKey, TValue> : ReadOnlyEntitySet<TKey, TValue>, IDictionary<TKey, TValue>
+    public class RedisEntrySet<TKey, TValue> : ReadOnlyEntrySet<TKey, TValue>, IDictionary<TKey, TValue>
         where TKey : IConvertible where TValue : new() {
 
         /// <summary>
@@ -16,7 +16,7 @@ namespace Redis.Net.Generic {
         /// </summary>
         /// <param name="database">Redis Database</param>
         /// <param name="baseKey">Redis Key Name</param>
-        public RedisEntitySet(IDatabase database, string baseKey) : base(database, baseKey) {
+        public RedisEntrySet(IDatabase database, string baseKey) : base(database, baseKey) {
         }
 
         #region Implementation of ICollection<KeyValuePair<TKey,TValue>>
@@ -26,7 +26,7 @@ namespace Redis.Net.Generic {
         /// <exception cref="T:System.NotSupportedException">The <see cref="T:System.Collections.Generic.ICollection`1"></see> is read-only.</exception>
         public void Add(KeyValuePair<TKey, TValue> item) {
             var setKey = GetEntryKey(item.Key);
-            Database.HashSet(setKey, RedisHashSetExtensions.ToHashEntries(item.Value).ToArray());
+            Database.HashSet(setKey, item.Value.ToHashEntries().ToArray());
             OnAdded(item.Key);
         }
 
@@ -89,7 +89,7 @@ namespace Redis.Net.Generic {
         /// <exception cref="T:System.NotSupportedException">The <see cref="T:System.Collections.Generic.IDictionary`2"></see> is read-only.</exception>
         public void Add(TKey key, TValue value) {
             var setKey = GetEntryKey(key);
-            Database.HashSet(setKey, RedisHashSetExtensions.ToHashEntries(value).ToArray());
+            Database.HashSet(setKey, value.ToHashEntries().ToArray());
             OnAdded(key);
         }
 
@@ -121,7 +121,7 @@ namespace Redis.Net.Generic {
         /// <param name="value"></param>
         /// <returns></returns>
         public Task AddAsync(IBatch batch, TKey key, TValue value) {
-            return base.AddHashSetBatch(batch,key,RedisHashSetExtensions.ToHashEntries(value));
+            return base.AddHashSetBatch(batch,key,value.ToHashEntries());
         }
 
         /// <summary>

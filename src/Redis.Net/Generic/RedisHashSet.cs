@@ -1,8 +1,8 @@
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using StackExchange.Redis;
 
 namespace Redis.Net.Generic {
     public class RedisHashSet<TKey, TValue> : ReadOnlyRedisHashSet<TKey, TValue> where TKey : IConvertible where TValue : IConvertible {
@@ -74,12 +74,6 @@ namespace Redis.Net.Generic {
             var entities = tuples.Select(t => new HashEntry(RedisValue.Unbox(t.Key), RedisValue.Unbox((t.Value))))
                 .ToArray();
             await Database.HashSetAsync(SetKey, entities);
-        }
-
-        /// <summary>Removes all items from the <see cref="T:System.Collections.Generic.ICollection`1"></see>.</summary>
-        /// <exception cref="T:System.NotSupportedException">The <see cref="T:System.Collections.Generic.ICollection`1"></see> is read-only.</exception>
-        public void Clear() {
-            Database.KeyDelete(SetKey);
         }
 
         /// <summary>

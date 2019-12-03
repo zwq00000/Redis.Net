@@ -164,7 +164,7 @@ namespace Redis.Net {
 
             public static PropertyInfo[] GetProperties () {
                 if (_cache == null) {
-                    var type = typeof(T);
+                    var type = typeof (T);
                     var props = GetProperties (type);
                     if (type.IsInterface) {
                         props = props.Concat (type.GetInterfaces ().SelectMany (i => GetProperties (i)));

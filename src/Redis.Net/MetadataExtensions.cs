@@ -12,11 +12,11 @@ namespace Redis.Net {
         /// <typeparam name="TValue"></typeparam>
         /// <param name="expression"></param>
         /// <returns></returns>
-        public static string MemberName<TModel, TValue>(this Expression<Func<TModel, TValue>> expression) {
+        public static string MemberName<TModel, TValue> (this Expression<Func<TModel, TValue>> expression) {
             if (expression == null) {
-                throw new ArgumentNullException(nameof(expression));
+                throw new ArgumentNullException (nameof (expression));
             }
-            return expression.GetMemberInfo().Name;
+            return expression.GetMemberInfo ().Name;
         }
 
         #region GetMemberInfo 获取 表达式的 成员信息
@@ -29,12 +29,12 @@ namespace Redis.Net {
         /// <param name="model"></param>
         /// <param name="expression"></param>
         /// <returns></returns>
-        public static MemberInfo GetMemberInfo<TModel, TValue>(this TModel model,
+        public static MemberInfo GetMemberInfo<TModel, TValue> (this TModel model,
             Expression<Func<TModel, TValue>> expression) {
             if (expression == null) {
-                throw new ArgumentNullException(nameof(expression));
+                throw new ArgumentNullException (nameof (expression));
             }
-            return expression.GetMemberInfo();
+            return expression.GetMemberInfo ();
         }
 
         /// <summary>
@@ -43,18 +43,18 @@ namespace Redis.Net {
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        private static MemberInfo GetMemberInfo(this Expression expression) {
+        private static MemberInfo GetMemberInfo (this Expression expression) {
             switch (expression.NodeType) {
                 case ExpressionType.Lambda:
-                    return GetMemberInfo(expression as LambdaExpression);
+                    return (expression as LambdaExpression).GetMemberInfo ();
                 case ExpressionType.MemberAccess:
-                    return GetMemberInfo(expression as MemberExpression);
+                    return (expression as MemberExpression).GetMemberInfo ();
                 case ExpressionType.Convert:
-                    return GetMemberInfo(expression as UnaryExpression);
+                    return (expression as UnaryExpression).GetMemberInfo ();
                 case ExpressionType.Call:
-                    return GetMemberInfo(expression as MethodCallExpression);
+                    return (expression as MethodCallExpression).GetMemberInfo ();
                 default:
-                    throw new InvalidExpressionException($"不支持的表达式类型:{expression.NodeType}\n表达式:{expression}");
+                    throw new InvalidExpressionException ($"不支持的表达式类型:{expression.NodeType}\n表达式:{expression}");
             }
         }
 
@@ -63,8 +63,8 @@ namespace Redis.Net {
         /// </summary>
         /// <param name="lambda"></param>
         /// <returns></returns>
-        private static MemberInfo GetMemberInfo(this LambdaExpression lambda) {
-            return GetMemberInfo(lambda.Body);
+        private static MemberInfo GetMemberInfo (this LambdaExpression lambda) {
+            return lambda.Body.GetMemberInfo ();
         }
 
         /// <summary>
@@ -72,8 +72,8 @@ namespace Redis.Net {
         /// </summary>
         /// <param name="unary"></param>
         /// <returns></returns>
-        private static MemberInfo GetMemberInfo(this UnaryExpression unary) {
-            return GetMemberInfo(unary.Operand);
+        private static MemberInfo GetMemberInfo (this UnaryExpression unary) {
+            return unary.Operand.GetMemberInfo ();
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace Redis.Net {
         /// </summary>
         /// <param name="member"></param>
         /// <returns></returns>
-        private static MemberInfo GetMemberInfo(this MemberExpression member) {
+        private static MemberInfo GetMemberInfo (this MemberExpression member) {
             return member.Member;
         }
 
@@ -90,7 +90,7 @@ namespace Redis.Net {
         /// </summary>
         /// <param name="lambda"></param>
         /// <returns></returns>
-        private static MemberInfo GetMemberInfo(this MethodCallExpression lambda) {
+        private static MemberInfo GetMemberInfo (this MethodCallExpression lambda) {
             return lambda.Method;
         }
 
