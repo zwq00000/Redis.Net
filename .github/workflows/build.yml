@@ -1,12 +1,9 @@
 name: CI
-
 on: [push]
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
-    
+    runs-on: ubuntu-latest   
     steps:
     - uses: actions/checkout@v1
     - name: Setup .NET Core
@@ -35,4 +32,5 @@ jobs:
         echo '$version'
         #dotnet pack src/Redis.Net -o ../../publish/ -c Release -p:PackageVersion=1.0.1-ci-$version
     - name: publish nuget
+      run: echo '$version'
       #run: dotnet nuget push **/*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
