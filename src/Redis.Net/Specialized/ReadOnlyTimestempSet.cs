@@ -21,6 +21,24 @@ namespace Redis.Net.Specialized {
             this.SortedSet = new RedisSortedSet<TKey>(database, setKey);
         }
 
+        /// <summary>
+        /// 返回基础集合
+        /// </summary>
+        /// <value></value>
+        public ReadOnlySortedSet<TKey> BaseSet{
+            get{
+                return SortedSet;
+            }
+        } 
+
+        /// <summary>
+        /// 获取集合全部键值
+        /// </summary>
+        /// <value></value>
+        public IEnumerable<TKey> Keys{get{
+            return SortedSet.Keys;
+        }}
+
         ///<summary>
         /// 获取指定 shipId 的时间戳 (unix time sec)
         ///</summary>
