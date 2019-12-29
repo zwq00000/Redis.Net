@@ -3,7 +3,10 @@ on: [push]
 
 jobs:
   build:
-    runs-on: ubuntu-latest   
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        redis-version: [4, 5]
     steps:
     - uses: actions/checkout@v1
     - name: Setup .NET Core
@@ -12,8 +15,11 @@ jobs:
         dotnet-version: 2.2.108
     - name: Build with dotnet
       run: dotnet build --configuration Release
-    #- name: Unit tests
-    #  run: dotnet test
+    - name: Start Redis
+      uses: superchargejs/redis-github-action@v1
+      with:
+        redis-version: ${{ matrix.redis-version }}
+    - run: dotnet test
   
   publish:
     needs: [build]
@@ -27,11 +33,11 @@ jobs:
     - name: Build with dotnet
       run: dotnet build --configuration Release
     - name: Package
+      shell: bash
       run: |
-        varsion=`date +%y%m%d-%H%m`
-        echo $version
-        dotnet pack src/Redis.Net -o ../../publish/ -c Release -p:PackageVersion=1.0.1-ci-$version
+        subversion=`date +%y%m%d-%H%m`
+        echo $subversion
+        dotnet pack src/Redis.Net -o ../../publish/ -c Release -p:PackageVersion=1.0.1-ci-$subversion
     - name: publish nuget
-      run: |
-        echo $version
+      run:
         dotnet nuget push **/*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
