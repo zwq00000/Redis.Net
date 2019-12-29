@@ -17,7 +17,7 @@ namespace RedisExtensionsTests {
             AbortOnConnectFail = true,
             KeyPrefix = "_my_key_prefix_",
             Hosts = new RedisHost[]{
-                new RedisHost(){Host = "192.168.1.103", Port = 6379}
+                new RedisHost(){Host = "localhost", Port = 6379}
             },
             AllowAdmin = false,
             ConnectTimeout = 3000,
