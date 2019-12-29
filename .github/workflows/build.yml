@@ -1,12 +1,10 @@
 name: CI
-
 on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v1
     - name: Setup .NET Core
@@ -15,12 +13,36 @@ jobs:
         dotnet-version: 2.2.108
     - name: Build with dotnet
       run: dotnet build --configuration Release
-    - name: Setup Redis
-      uses: zhulik/redis-action@1.1.0
-      # with:
-        # Version of Redis to use
-        #redis version: # optional, default is latest
-        # Number of Redis databases
-        #number of databases: # optional, default is 16
-    - name: Unit tests
-      run: dotnet test
+  
+#   test:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@master
+#       - uses: shogo82148/actions-setup-redis@v1
+#         with:
+#           redis-version: '5.x'
+#       - uses: actions/setup-dotnet@v1
+#         with:
+#           dotnet-version: 2.2.108
+#       - run: dotnet test
+  
+  publish:
+    needs: [build]
+    runs-on: ubuntu-latest   
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 2.2.108
+    - name: Build with dotnet
+      run: dotnet build --configuration Release
+    - name: Package
+      shell: bash
+      run: |
+        subversion=`date +%Y%m%d-%H%m`
+        echo $subversion
+        dotnet pack src/Redis.Net -o ../../publish/ -c Release -p:PackageVersion=1.0.1-ci-$subversion
+    - name: publish nuget
+      run:
+        dotnet nuget push **/*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
