@@ -4,9 +4,7 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        redis-version: [4, 5]
+
     steps:
     - uses: actions/checkout@v1
     - name: Setup .NET Core
@@ -15,14 +13,21 @@ jobs:
         dotnet-version: 2.2.108
     - name: Build with dotnet
       run: dotnet build --configuration Release
-    - name: Start Redis
-      uses: superchargejs/redis-github-action@v1
-      with:
-        redis-version: ${{ matrix.redis-version }}
-    - run: dotnet test
+  
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: shogo82148/actions-setup-redis@v1
+        with:
+          redis-version: '5.x'
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 2.2.108
+      - run: dotnet test
   
   publish:
-    needs: [build]
+    needs: [build,test]
     runs-on: ubuntu-latest   
     steps:
     - uses: actions/checkout@v1
