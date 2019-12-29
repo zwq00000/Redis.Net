@@ -27,11 +27,11 @@ jobs:
     - name: Build with dotnet
       run: dotnet build --configuration Release
     - name: Package
-      run:
+      run: |
         varsion=`date +%y%m%d-%H%m`
         echo $version
         dotnet pack src/Redis.Net -o ../../publish/ -c Release -p:PackageVersion=1.0.1-ci-$version
     - name: publish nuget
-      run:
+      run: |
         echo $version
         dotnet nuget push **/*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
