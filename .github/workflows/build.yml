@@ -40,7 +40,7 @@ jobs:
     - name: Package
       shell: bash
       run: |
-        subversion=`date +%y%m%d-%H%m`
+        subversion=`date +%Y%m%d-%H%m`
         echo $subversion
         dotnet pack src/Redis.Net -o ../../publish/ -c Release -p:PackageVersion=1.0.1-ci-$subversion
     - name: publish nuget
