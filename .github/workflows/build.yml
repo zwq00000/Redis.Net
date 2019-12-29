@@ -29,8 +29,9 @@ jobs:
     - name: Package
       run:
         varsion=`date +%y%m%d-%H%m`
-        echo '$version'
-        #dotnet pack src/Redis.Net -o ../../publish/ -c Release -p:PackageVersion=1.0.1-ci-$version
+        echo $version
+        dotnet pack src/Redis.Net -o ../../publish/ -c Release -p:PackageVersion=1.0.1-ci-$version
     - name: publish nuget
-      run: echo '$version'
-      #run: dotnet nuget push **/*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
+      run:
+        echo $version
+        dotnet nuget push **/*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
