@@ -82,7 +82,7 @@ namespace RedisExtensionsTests {
             var userEntrys = GetUsers(SampleCount).Select(u => new HashEntry(u.UserId.ToString(), Serializer.Serialize(u)))
                 .ToArray();
             foreach (var entry in userEntrys) {
-                batch.HashSetAsync(SetKey,entry.Name,entry.Value);
+                await batch.HashSetAsync(SetKey,entry.Name,entry.Value);
             }
             
             batch.Execute();
