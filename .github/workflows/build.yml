@@ -28,7 +28,7 @@ jobs:
       run: dotnet build --configuration Release
     - name: Package
       run:
-        varsion='date +"%y%m%d-%H%m"'
+        varsion=`date +%y%m%d-%H%m`
         echo '$version'
         #dotnet pack src/Redis.Net -o ../../publish/ -c Release -p:PackageVersion=1.0.1-ci-$version
     - name: publish nuget
