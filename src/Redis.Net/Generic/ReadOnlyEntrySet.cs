@@ -5,7 +5,6 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Redis.Net.Redis.Generic;
 using StackExchange.Redis;
 
 namespace Redis.Net.Generic {

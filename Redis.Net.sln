@@ -12,7 +12,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedisExtensionsTests", "test\RedisExtensionsTests\RedisExtensionsTests.csproj", "{A94FA33C-27D2-418A-B429-20EF863E1F02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RedisExtensionsTests", "test\RedisExtensionsTests\RedisExtensionsTests.csproj", "{A94FA33C-27D2-418A-B429-20EF863E1F02}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Redis.Net.Serializer.Json", "src\Redis.Net.Serializer.Json\Redis.Net.Serializer.Json.csproj", "{FB4C70B4-0E51-4831-8595-96D8979B7395}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redis.Net.Serializer.MessagePack", "src\Redis.Net.Serializer.MessagePack\Redis.Net.Serializer.MessagePack.csproj", "{90739B08-C01D-436D-94DD-6F31C7410365}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +36,14 @@ Global
 		{A94FA33C-27D2-418A-B429-20EF863E1F02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A94FA33C-27D2-418A-B429-20EF863E1F02}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A94FA33C-27D2-418A-B429-20EF863E1F02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB4C70B4-0E51-4831-8595-96D8979B7395}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB4C70B4-0E51-4831-8595-96D8979B7395}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB4C70B4-0E51-4831-8595-96D8979B7395}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB4C70B4-0E51-4831-8595-96D8979B7395}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90739B08-C01D-436D-94DD-6F31C7410365}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90739B08-C01D-436D-94DD-6F31C7410365}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90739B08-C01D-436D-94DD-6F31C7410365}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90739B08-C01D-436D-94DD-6F31C7410365}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

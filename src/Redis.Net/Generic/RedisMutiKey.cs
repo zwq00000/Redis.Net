@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Redis.Net.Generic;
 using StackExchange.Redis;
 
-namespace Redis.Net.Redis.Generic {
+namespace Redis.Net.Generic {
     /// <summary>
     /// Redis 多键 Set/Hashset 基类
     /// </summary>

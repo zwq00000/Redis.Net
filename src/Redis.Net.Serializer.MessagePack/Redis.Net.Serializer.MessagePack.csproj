@@ -1,10 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>Redis.Net</RootNamespace>
-    <SharedFrameworkVersion>2.2.0</SharedFrameworkVersion>
-     <LangVersion>7.1</LangVersion>
+    <RootNamespace>Redis.Net.Serializer</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -18,8 +16,8 @@
     <VersionSuffix>$(VersionSuffix)</VersionSuffix>
     <Authors>zwq00000@hotmail.com</Authors>
     <Company>XiGe Digi Tech CO.</Company>
-    <Product>Redis.Net</Product>
-    <Description>Redis Collections Warpper for .NetCore</Description>
+    <Product>Redis.Net.Serializer</Product>
+    <Description>Serializer for Redis.Net</Description>
     <PackageProjectUrl>https://github.com/zwq00000/Redis.Net</PackageProjectUrl>
     <PackageTags>Redis;.NetCore</PackageTags>
     <RepositoryUrl>https://github.com/zwq00000/Redis.Net.git</RepositoryUrl>
@@ -28,6 +26,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
+    <PackageReference Include="MessagePack" Version="2.0.323" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Redis.Net\Redis.Net.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,11 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>Redis.Net</RootNamespace>
+    <RootNamespace>Redis.Net.Serializer</RootNamespace>
     <SharedFrameworkVersion>2.2.0</SharedFrameworkVersion>
-     <LangVersion>7.1</LangVersion>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
+
 
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -18,8 +19,8 @@
     <VersionSuffix>$(VersionSuffix)</VersionSuffix>
     <Authors>zwq00000@hotmail.com</Authors>
     <Company>XiGe Digi Tech CO.</Company>
-    <Product>Redis.Net</Product>
-    <Description>Redis Collections Warpper for .NetCore</Description>
+    <Product>Redis.Net.Serializer</Product>
+    <Description>Serializer for Redis.Net</Description>
     <PackageProjectUrl>https://github.com/zwq00000/Redis.Net</PackageProjectUrl>
     <PackageTags>Redis;.NetCore</PackageTags>
     <RepositoryUrl>https://github.com/zwq00000/Redis.Net.git</RepositoryUrl>
@@ -27,7 +28,12 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
+
   <ItemGroup>
-    <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Redis.net\Redis.net.csproj" />
   </ItemGroup>
 </Project>

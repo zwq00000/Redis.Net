@@ -14,6 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Redis.Net.Serializer.Json\Redis.Net.Serializer.Json.csproj" />
+    <ProjectReference Include="..\..\src\Redis.Net.Serializer.MessagePack\Redis.Net.Serializer.MessagePack.csproj" />
     <ProjectReference Include="..\..\src\Redis.Net\Redis.Net.csproj" />
   </ItemGroup>
 
