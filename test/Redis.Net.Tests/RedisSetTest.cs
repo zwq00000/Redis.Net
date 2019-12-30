@@ -25,7 +25,7 @@ namespace Redis.Net.Tests {
         [Fact]
         public async Task TestAddAsync () {
             await _set.AddAsync ("Test2");
-            Assert.Contains ("Test1", _set.Values);
+            Assert.Contains ("Test2", _set.Values);
         }
     }
 }

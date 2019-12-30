@@ -5,6 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace Redis.Net.Generic {
+    /// <summary>
+    /// Reids HashSet
+    /// </summary>
+    /// <typeparam name="TKey"></typeparam>
+    /// <typeparam name="TValue"></typeparam>
     public class RedisHashSet<TKey, TValue> : ReadOnlyRedisHashSet<TKey, TValue> where TKey : IConvertible where TValue : IConvertible {
 
         public RedisHashSet(IDatabase database, RedisKey setKey) : base(database, setKey) {

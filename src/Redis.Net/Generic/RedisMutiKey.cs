@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Redis.Net.Generic;
 using StackExchange.Redis;
 
-namespace Redis.Net.Redis.Generic
-{
+namespace Redis.Net.Redis.Generic {
     /// <summary>
     /// Redis 多键 Set/Hashset 基类
     /// </summary>
@@ -16,6 +16,9 @@ namespace Redis.Net.Redis.Generic
         /// </summary>
         public readonly RedisKey BaseKey;
 
+        /// <summary>
+        /// Redis HashSet Index Set
+        /// </summary>
         private readonly RedisSet<TKey> _indexSet;
         /// <summary>
         /// 过时的 Key 索引
@@ -65,7 +68,28 @@ namespace Redis.Net.Redis.Generic
         /// <param name="key"></param>
         /// <returns></returns>
         public bool ContainsKey (TKey key) {
-            return _indexSet.Contains (key);
+            var result = _indexSet.Contains (key);;
+            if (!result) {
+                return this.CheckExpired (key);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 检查过去 Set 是否存在,如果不存在,则清除 过期索引
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        private bool CheckExpired (TKey key) {
+            if (!_expireIndexSet.Contains (key)) {
+                return false;
+            }
+            var setKey = GetEntryKey (key);
+            var setExiste = Database.KeyExists (setKey);
+            if (!setExiste) {
+                _expireIndexSet.Remove (key);
+            }
+            return setExiste;
         }
 
         /// <summary>
@@ -108,6 +132,19 @@ namespace Redis.Net.Redis.Generic
         protected Task AddHashSetBatch (IBatch batch, TKey key, IEnumerable<HashEntry> entries) {
             var setKey = GetEntryKey (key);
             _indexSet.AddAsync (batch, key);
+            batch.HashSetAsync (setKey, entries.ToArray ());
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// 更新 Hashset ,不更新索引
+        /// </summary>
+        /// <param name="batch"></param>
+        /// <param name="key"></param>
+        /// <param name="entries"></param>
+        /// <returns></returns>
+        protected Task UpdateHashSetBatch (IBatch batch, TKey key, IEnumerable<HashEntry> entries) {
+            var setKey = GetEntryKey (key);
             batch.HashSetAsync (setKey, entries.ToArray ());
             return Task.CompletedTask;
         }
@@ -167,9 +204,21 @@ namespace Redis.Net.Redis.Generic
 
         #endregion
 
-        /// <summary>Gets an enumerable collection that contains the keys in the read-only dictionary.</summary>
+        protected TKey KeyConvert (RedisValue value) {
+            return (TKey) ((IConvertible) value).ToType (typeof (TKey), CultureInfo.CurrentCulture);
+        }
+
+        /// <summary>
+        /// Gets an enumerable collection that contains the keys in the read-only dictionary.
+        /// 返回 合并索引键值
+        /// </summary>
         /// <returns>An enumerable collection that contains the keys in the read-only dictionary.</returns>
-        public ICollection<TKey> Keys => IndexSet.Values;
+        public ICollection<TKey> Keys {
+            get {
+                var members = Database.SetCombine (SetOperation.Union, _indexSet.SetKey, _expireIndexSet.SetKey);
+                return Array.ConvertAll (members, KeyConvert);
+            }
+        }
 
         /// <summary>
         /// 索引集合
