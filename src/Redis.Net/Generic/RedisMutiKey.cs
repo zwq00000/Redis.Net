@@ -55,12 +55,6 @@ namespace Redis.Net.Generic {
             return Database.KeyDelete (setKey);
         }
 
-        protected async Task<bool> RemoveAsync (TKey key) {
-            var setKey = GetEntryKey (key);
-            await _indexSet.RemoveAsync (key);
-            return await Database.KeyDeleteAsync (setKey);
-        }
-
         /// <summary>
         /// Determines whether the read-only dictionary contains an element that has the specified key
         /// </summary>

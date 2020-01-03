@@ -97,6 +97,57 @@ namespace Redis.Net.Generic {
 
             #endregion
 
+            #region async
+
+            /// <summary>
+            /// 增加实体集合的批处理方法,用户可以自定义 Entity to HashEntry[] 的方式
+            /// </summary>
+            /// <param name="key"></param>
+            /// <param name="entries"></param>
+            /// <returns></returns>
+            public Task AddAsync (TKey key, IEnumerable<HashEntry> entries) {
+                var batch = Database.CreateBatch ();
+                base.AddHashSetBatch (batch, key, entries);
+                batch.Execute ();
+                return Task.CompletedTask;
+            }
+
+            /// <summary>
+            /// 更新实体集合的批处理方法,用户可以自定义 Entity to HashEntry[] 的方式
+            /// </summary>
+            /// <param name="key"></param>
+            /// <param name="entries"></param>
+            /// <returns></returns>
+            public async Task UpdateAsync (TKey key, IEnumerable<HashEntry> entries) {
+                var setKey = GetEntryKey (key);
+                await Database.HashSetAsync (setKey, entries.ToArray ());
+            }
+
+            /// <summary>
+            /// 更新实体集合的批处理方法,用户可以自定义 Entity to HashEntry[] 的方式
+            /// </summary>
+            /// <param name="key"></param>
+            /// <param name="entries"></param>
+            /// <returns></returns>
+            public async Task UpdateAsync (TKey key, params HashEntry[] entries) {
+                var setKey = GetEntryKey (key);
+                await Database.HashSetAsync (setKey, entries);
+            }
+
+            /// <summary>
+            /// 删除实体集合的批处理方法
+            /// </summary>
+            /// <param name="key"></param>
+            /// <returns></returns>
+            public Task<bool> RemoveAsync (TKey key) {
+                var batch = Database.CreateBatch ();
+                var result = base.RemoveBatch (batch, key);
+                batch.Execute ();
+                return result;
+            }
+
+            #endregion
+
             #region Batch
 
             /// <summary>
