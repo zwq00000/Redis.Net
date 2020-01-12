@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Redis.Net.Generic;
 using StackExchange.Redis;
 
 namespace Redis.Net {
@@ -16,14 +17,49 @@ namespace Redis.Net {
         /// </summary>
         private const string DefaultKey = "Tags:";
 
+        private RedisKey __AllTagsSetKey;
+
+        /// <summary>
+        /// All Tags 
+        /// </summary>
+        private RedisSet<string> _allTags;
+
         public RedisTagsSet (IDatabase database, string baseKey = DefaultKey) : base (database, baseKey) {
             _database = database;
+            this.__AllTagsSetKey = base.GetSubKey("__ALLTAGS");
+            this._allTags = new RedisSet<string>(database,__AllTagsSetKey);
         }
 
         private RedisValue[] FilterTags (string[] tags) {
             return tags.Where (t => !string.IsNullOrWhiteSpace (t))
                 .Select (t => (RedisValue) t.Trim ()).ToArray ();
         }
+
+        #region  Tags Methods
+
+        /// <summary>
+        /// 获取全部标记
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<string> GetAllTags () {
+            return _allTags.ToArray();
+        }
+
+        /// <summary>
+        /// remove tag and remove releated entity tag
+        /// </summary>
+        /// <param name="tag"></param>
+        public void DeleteTag(string tag){
+            var entities = this.GetAllEntities();
+            var batch = Database.CreateBatch();
+            foreach(var id in entities){
+                this.RemoveTagsBatch(batch,id,tag);
+            }
+            batch.SetRemoveAsync(__AllTagsSetKey,tag);
+            batch.Execute();
+        }
+
+        #endregion
 
         /// <summary>
         /// 增加标记
@@ -35,9 +71,10 @@ namespace Redis.Net {
                 throw new ArgumentNullException (nameof (entityId));
             }
 
-            var setKey = GetSubKey (entityId);
             var values = FilterTags (tags);
             if (values.Any ()) {
+                var setKey = GetSubKey (entityId);
+                _database.SetAdd(__AllTagsSetKey,values);
                 return _database.SetAdd (setKey, values);
             }
 
@@ -102,6 +139,12 @@ namespace Redis.Net {
             }
         }
 
+        public IEnumerable<string> GetAllEntities(){
+            var len = this.BaseKey.ToString().Length;
+            return base.GetKeys().Where(k=>k!=__AllTagsSetKey)
+            .Select(k=>k.ToString().Substring(len));
+        }
+
         #region Async
         /// <summary>
         /// 是否包含标记
@@ -109,14 +152,14 @@ namespace Redis.Net {
         /// <param name="entityId"></param>
         /// <param name="tags"></param>
         /// <returns></returns>
-        public virtual async Task<long> AddTagAsync (string entityId, params string[] tags) {
+        public virtual async Task<long> AddTagsAsync (string entityId, params string[] tags) {
             if (string.IsNullOrEmpty (entityId)) {
                 throw new ArgumentNullException (nameof (entityId));
             }
 
-            var setKey = GetSubKey (entityId);
             var values = FilterTags (tags);
             if (values.Any ()) {
+                var setKey = GetSubKey (entityId);
                 return await _database.SetAddAsync (setKey, values);
             }
 
