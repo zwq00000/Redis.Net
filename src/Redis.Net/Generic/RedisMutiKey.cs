@@ -16,6 +16,10 @@ namespace Redis.Net.Redis.Generic {
         /// </summary>
         public readonly RedisKey BaseKey;
 
+        internal const string IndexSetName = "@__SetIndex";
+
+        internal const string ExpireIndexSetName = "@__ExpireIndex";
+
         /// <summary>
         /// Redis HashSet Index Set
         /// </summary>
@@ -27,6 +31,31 @@ namespace Redis.Net.Redis.Generic {
 
         protected IDatabase Database { get; }
 
+        /// <summary>
+        /// 重建索引,
+        /// </summary>
+        /// <returns></returns>
+        public async Task RebuldIndexAsync (Func<string, TKey> convert) {
+            var entityKeys = ResolveEntiyKeys ().Select (k => convert (k));
+            var batch = Database.CreateBatch ();
+            _indexSet.ClearAll ();
+            await _indexSet.AddAsync (entityKeys.ToArray ());
+        }
+
+        /// <summary>
+        /// 获取 实体键(排除索引集合键)
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<string> ResolveEntiyKeys () {
+            var keys = GetKeys ();
+            var startIndex = this.BaseKey.ToString ().Length;
+            foreach (string key in keys) {
+                if (!key.EndsWith (IndexSetName) && !key.EndsWith (ExpireIndexSetName)) {
+                    yield return key.Substring (startIndex);
+                }
+            }
+        }
+
         protected RedisMutiKey (IDatabase database, string baseKey) {
             if (string.IsNullOrWhiteSpace (baseKey)) {
                 throw new ArgumentNullException (nameof (baseKey));
@@ -36,8 +65,8 @@ namespace Redis.Net.Redis.Generic {
                 baseKey = baseKey + ":";
             }
             this.BaseKey = baseKey;
-            this._indexSet = new RedisSet<TKey> (database, BaseKey.Append ("@__SetIndex"));
-            this._expireIndexSet = new RedisSet<TKey> (database, BaseKey.Append ("@__ExpireIndex"));
+            this._indexSet = new RedisSet<TKey> (database, BaseKey.Append (IndexSetName));
+            this._expireIndexSet = new RedisSet<TKey> (database, BaseKey.Append (ExpireIndexSetName));
         }
 
         /// <summary>
