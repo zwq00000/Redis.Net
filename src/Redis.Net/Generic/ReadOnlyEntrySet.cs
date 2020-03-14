@@ -10,7 +10,7 @@ using StackExchange.Redis;
 
 namespace Redis.Net.Generic {
     /// <summary>
-    /// Redis HashSet Warpper
+    /// readonly Redis HashSet for Entity Warpper
     /// </summary>
     public class ReadOnlyEntrySet<TKey, TEntity> : RedisMutiKey<TKey>, IReadOnlyDictionary<TKey, TEntity>
         where TKey : IConvertible where TEntity : new () {

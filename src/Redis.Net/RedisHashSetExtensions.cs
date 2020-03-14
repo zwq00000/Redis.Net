@@ -50,16 +50,19 @@ namespace Redis.Net {
             var instance = new T ();
             for (int i = 0; i < values.Length; i++) {
                 var prop = properties[i];
-                var val = values[i];
-
-                if (val.HasValue) {
-                    prop.SetValue (instance, ((IConvertible) val).ToType (prop.PropertyType, CultureInfo.InvariantCulture));
-                }
+                var value = values[i];
+                instance.SetValue (prop, value);
             }
 
             return instance;
         }
 
+        /// <summary>
+        /// 根据 <see cref="HashEntry" />集合,获取 对象实例 
+        /// </summary>
+        /// <param name="entries"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public static T ToInstance<T> (this IEnumerable<HashEntry> entries) where T : new () {
             var properties = GetProperties<T> ().ToArray ();
             var instance = new T ();
@@ -69,13 +72,26 @@ namespace Redis.Net {
                     continue;
                 }
                 var prop = properties.FirstOrDefault (p => p.Name == entry.Name);
-                if (prop != null) {
-                    prop.SetValue (instance,
-                        ((IConvertible) value).ToType (prop.PropertyType, CultureInfo.InvariantCulture));
-                }
+                instance.SetValue (prop, value);
             }
 
             return instance;
+        }
+
+        private static void SetValue<T> (this T instance, PropertyInfo prop, RedisValue value) {
+            if (prop == null) {
+                return;
+            }
+            if (!value.HasValue) {
+                return;
+            }
+            if (prop.PropertyType == typeof (TimeSpan)) {
+                var timeSpan = TimeSpan.FromTicks ((long) value);
+                prop.SetValue (instance, timeSpan);
+                return;
+            }
+            var propValue = ((IConvertible) value).ToType (prop.PropertyType, CultureInfo.InvariantCulture);
+            prop.SetValue (instance, propValue);
         }
 
         /// <summary>
@@ -98,22 +114,40 @@ namespace Redis.Net {
         /// 获取支持 <see cref="RedisValue"/>包装的运行时属性
         /// 支持 <see cref="Type.IsValueType"/> 和 <see cref="T:string"/>
         /// </summary>
+        /// <remarks>
+        /// 支持类型:
+        /// - string
+        /// - DateTime
+        /// - int
+        /// - uint
+        /// - double
+        /// - byte[]
+        /// - bool
+        /// - long
+        /// - ulong
+        /// - float
+        /// - ReadOnlyMemory&gt;byte&lt;
+        /// - Memory&gt;byte&lt;
+        /// - RedisValue
+        /// </remarks>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         private static PropertyInfo[] GetProperties<T> () {
             return PropertiesCache<T>.GetProperties ();
         }
 
+        /// <summary>
+        /// 尝试解析 <see cref="IConvertible">对象数据</see> 为 <see cref="RedisValue"/>
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         private static bool TryParse (object obj, out RedisValue value) {
             if (obj == null) {
                 value = RedisValue.Null;
                 return false;
             }
 
-            if (obj.GetType ().IsEnum) {
-                value = (int) obj;
-                return true;
-            }
             switch (obj) {
                 case string v:
                     value = v;
@@ -152,11 +186,34 @@ namespace Redis.Net {
                     value = v;
                     break;
                 default:
-                    value = RedisValue.Null;
-                    return false;
+                    return TryParseExtension (obj, out value);
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private static bool TryParseExtension (object obj, out RedisValue value) {
+            if (obj.GetType ().IsEnum) {
+                value = (int) obj;
+                return true;
+            }
+            if (obj is DateTime date) {
+                value = date.ToString ();
+                return true;
+            }
+            if (obj is TimeSpan time) {
+                value = time.Ticks;
+                return true;
+            }
+
+            value = RedisValue.Null;
+            return false;
         }
 
         static class PropertiesCache<T> {
@@ -177,7 +234,13 @@ namespace Redis.Net {
 
             private static IEnumerable<PropertyInfo> GetProperties (Type type) {
                 return type.GetRuntimeProperties ()
-                    .Where (p => p.PropertyType.IsValueType || p.PropertyType == typeof (string) || p.PropertyType.IsEnum);
+                    .Where (p => p.PropertyType.IsValueType 
+                            || p.PropertyType == typeof (string) 
+                            || p.PropertyType.IsEnum
+                            || p.PropertyType == typeof(byte[])
+                            || p.PropertyType == typeof(ReadOnlyMemory<byte>)
+                            || p.PropertyType == typeof(Memory<byte>)
+                    );
             }
         }
     }
