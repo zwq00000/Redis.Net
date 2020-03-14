@@ -146,7 +146,7 @@ namespace Redis.Net {
         /// If UNLINK is available (Redis 4.0+), it will be used.
         /// </remarks>
         /// <exception cref="T:System.NotSupportedException">The <see cref="T:System.Collections.Generic.ICollection`1"></see> is read-only.</exception>
-        public Task<bool> ClearAllAsync (IBatch batch) {
+        public Task<bool> BatchClearAll (IBatch batch) {
             return batch.KeyDeleteAsync (SetKey);
         }
 

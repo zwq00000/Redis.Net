@@ -54,8 +54,8 @@ namespace Redis.Net.Redis.Generic {
         public void RebuildIndex (Func<string, TKey> convert) {
             var entityKeys = ResolveEntiyKeys ().Select (k => convert (k));
             var batch = Database.CreateBatch ();
-            var task1 = _indexSet.ClearAllAsync (batch);
-            var task2 = _indexSet.AddAsync (batch, entityKeys.ToArray ());
+            var task1 = _indexSet.BatchClearAll (batch);
+            var task2 = _indexSet.BatchAdd (batch, entityKeys.ToArray ());
             batch.Execute ();
         }
 
@@ -106,6 +106,12 @@ namespace Redis.Net.Redis.Generic {
             var setKey = GetEntryKey (key);
             await _indexSet.RemoveAsync (key);
             return await Database.KeyDeleteAsync (setKey);
+        }
+
+        protected async Task<long> RemoveAsync (params TKey[] keys) {
+            var setKeys = keys.Select (k => GetEntryKey (k)).ToArray ();
+            await _indexSet.RemoveAsync (keys);
+            return await Database.KeyDeleteAsync (setKeys);
         }
 
         /// <summary>
@@ -164,8 +170,8 @@ namespace Redis.Net.Redis.Generic {
         /// <param name="batch"></param>
         /// <param name="keys"></param>
         /// <returns></returns>
-        protected virtual Task<long> OnAddedAsync (IBatch batch, params TKey[] keys) {
-            return _indexSet.AddAsync (batch, keys);
+        protected virtual Task<long> BatchOnAdded (IBatch batch, params TKey[] keys) {
+            return _indexSet.BatchAdd (batch, keys);
         }
 
         /// <summary>
@@ -177,7 +183,7 @@ namespace Redis.Net.Redis.Generic {
         /// <returns></returns>
         protected Task AddHashSetBatch (IBatch batch, TKey key, IEnumerable<HashEntry> entries) {
             var setKey = GetEntryKey (key);
-            _indexSet.AddAsync (batch, key);
+            _indexSet.BatchAdd (batch, key);
             batch.HashSetAsync (setKey, entries.ToArray ());
             return Task.CompletedTask;
         }
@@ -203,7 +209,7 @@ namespace Redis.Net.Redis.Generic {
         /// <returns></returns>
         protected Task<bool> RemoveBatch (IBatch batch, TKey key) {
             var setKey = GetEntryKey (key);
-            _indexSet.RemoveAsync (batch, key);
+            _indexSet.BatchRemove (batch, key);
             return batch.KeyDeleteAsync (setKey);
         }
 
@@ -215,7 +221,7 @@ namespace Redis.Net.Redis.Generic {
         /// <returns></returns>
         protected Task<long> RemoveBatch (IBatch batch, TKey[] keys) {
             var setKeys = keys.Select (GetEntryKey).ToArray ();
-            _indexSet.RemoveAsync (batch, keys);
+            _indexSet.BatchRemove (batch, keys);
             return batch.KeyDeleteAsync (setKeys);
         }
 

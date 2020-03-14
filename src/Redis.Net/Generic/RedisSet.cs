@@ -83,7 +83,7 @@ namespace Redis.Net.Generic
 
         #region Batch
 
-        public Task<long> AddAsync(IBatch batch, params TValue[] values) {
+        public Task<long> BatchAdd(IBatch batch, params TValue[] values) {
             return batch.SetAddAsync(this.SetKey,Array.ConvertAll(values,v=>RedisValue.Unbox(v)));
         }
 
@@ -94,7 +94,7 @@ namespace Redis.Net.Generic
         /// <param name="values">The values to remove.</param>
         /// <returns>The number of members that were removed from the set, not including non existing members.</returns>
         /// <remarks>https://redis.io/commands/srem</remarks>
-        public Task<long> RemoveAsync(IBatch batch, params TValue[] values) {
+        public Task<long> BatchRemove(IBatch batch, params TValue[] values) {
             return batch.SetRemoveAsync(this.SetKey, Array.ConvertAll(values, v => RedisValue.Unbox(v)));
         }
 

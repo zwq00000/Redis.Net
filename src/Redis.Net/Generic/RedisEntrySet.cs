@@ -4,7 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using StackExchange.Redis;
 
-namespace Redis.Net.Generic {
+namespace Redis.Net.Generic
+{
     /// <summary>
     /// Redis HashSet Warpper
     /// </summary>
@@ -97,7 +98,7 @@ namespace Redis.Net.Generic {
 
             #endregion
 
-            #region AddAsync
+            #region Async Methods
 
             /// <summary>
             /// 增加实体集合的批处理方法,用户可以自定义 Entity to HashEntry[] 的方式
@@ -108,7 +109,7 @@ namespace Redis.Net.Generic {
             public async Task AddAsync (TKey key, IEnumerable<HashEntry> entries) {
                 var setKey = GetEntryKey (key);
                 await Database.HashSetAsync (setKey, entries.ToArray ());
-                await OnAddedAsync(key);
+                await OnAddedAsync (key);
             }
 
             /// <summary>
@@ -118,13 +119,22 @@ namespace Redis.Net.Generic {
             /// <param name="entries"></param>
             /// <returns></returns>
             public async Task UpdateAsync (TKey key, IEnumerable<HashEntry> entries) {
-                 var setKey = GetEntryKey (key);
-                await Database.HashSetAsync (setKey, entries.ToArray());
+                var setKey = GetEntryKey (key);
+                await Database.HashSetAsync (setKey, entries.ToArray ());
+            }
+
+            /// <summary>
+            /// 清理全部集合的异步方法
+            /// </summary>
+            /// <returns></returns>
+            public Task<long> ClearAsync () {
+                var keys = Keys.ToArray ();
+                return RemoveAsync (keys);
             }
 
             #endregion
 
-            #region Batch
+            #region Batch Methods
 
             /// <summary>
             /// 增加实体集合的批处理方法,用户可以自定义 Entity to HashEntry[] 的方式
@@ -133,7 +143,7 @@ namespace Redis.Net.Generic {
             /// <param name="key"></param>
             /// <param name="entries"></param>
             /// <returns></returns>
-            public Task AddAsync (IBatch batch, TKey key, IEnumerable<HashEntry> entries) {
+            public Task BatchAdd (IBatch batch, TKey key, IEnumerable<HashEntry> entries) {
                 return base.AddHashSetBatch (batch, key, entries);
             }
 
@@ -144,7 +154,7 @@ namespace Redis.Net.Generic {
             /// <param name="key"></param>
             /// <param name="entries"></param>
             /// <returns></returns>
-            public Task UpdateAsync (IBatch batch, TKey key, IEnumerable<HashEntry> entries) {
+            public Task BatchUpdate (IBatch batch, TKey key, IEnumerable<HashEntry> entries) {
                 return base.UpdateHashSetBatch (batch, key, entries);
             }
 
@@ -155,7 +165,7 @@ namespace Redis.Net.Generic {
             /// <param name="key"></param>
             /// <param name="value"></param>
             /// <returns></returns>
-            public Task AddAsync (IBatch batch, TKey key, TValue value) {
+            public Task BatchAdd (IBatch batch, TKey key, TValue value) {
                 return base.AddHashSetBatch (batch, key, value.ToHashEntries ());
             }
 
@@ -165,7 +175,7 @@ namespace Redis.Net.Generic {
             /// <param name="batch"></param>
             /// <param name="key"></param>
             /// <returns></returns>
-            public Task<bool> RemoveAsync (IBatch batch, TKey key) {
+            public Task<bool> BatchRemove (IBatch batch, TKey key) {
                 return RemoveBatch (batch, key);
             }
 
@@ -181,7 +191,7 @@ namespace Redis.Net.Generic {
             ///     terminology.
             ///</remarks>
             ///  <returns></returns>
-            public Task<bool> ExpireAsync (IBatch batch, TKey key, TimeSpan? expiry) {
+            public Task<bool> BatchExpire (IBatch batch, TKey key, TimeSpan? expiry) {
                 return ExpireBatch (batch, key, expiry);
             }
 
@@ -190,11 +200,55 @@ namespace Redis.Net.Generic {
             /// </summary>
             /// <param name="batch"></param>
             /// <returns></returns>
-            public Task<long> ClearAsync (IBatch batch) {
+            public Task<long> BatchClear (IBatch batch) {
                 var keys = Keys.ToArray ();
                 return RemoveBatch (batch, keys);
             }
 
             #endregion
+
+            public IBatchEntrySet<TKey, TValue> Batch (IBatch batch = null) {
+                if (batch == null) {
+                    batch = Database.CreateBatch ();
+                }
+                return new BatchImplement (this, batch);
+            }
+
+            class BatchImplement : IBatchEntrySet<TKey, TValue> {
+                private readonly RedisEntrySet<TKey, TValue> owner;
+                private readonly IBatch batch;
+
+                public BatchImplement (RedisEntrySet<TKey, TValue> owner, IBatch batch) {
+                    this.owner = owner;
+                    this.batch = batch;
+                }
+                public void Add (TKey key, IEnumerable<HashEntry> entries) {
+                    owner.AddHashSetBatch (batch, key, entries);
+                }
+
+                public void Add (TKey key, TValue value) {
+                    owner.AddHashSetBatch (batch, key, value.ToHashEntries ());
+                }
+
+                public void Clear () {
+                    owner.BatchClear (batch);
+                }
+
+                public void Execute () {
+                    batch.Execute ();
+                }
+
+                public void Expire (TKey key, TimeSpan? expiry) {
+                    owner.ExpireBatch (batch, key, expiry);
+                }
+
+                public void Remove (TKey key) {
+                    owner.RemoveBatch (batch, key);
+                }
+
+                public void Update (TKey key, IEnumerable<HashEntry> entries) {
+                    owner.UpdateHashSetBatch (batch, key, entries);
+                }
+            }
         }
 }

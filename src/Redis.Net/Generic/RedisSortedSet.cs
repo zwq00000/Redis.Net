@@ -1,8 +1,8 @@
-using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using StackExchange.Redis;
 
 namespace Redis.Net.Generic {
     /// <summary>
@@ -10,8 +10,7 @@ namespace Redis.Net.Generic {
     /// </summary>
     /// <typeparam name="TValue"> assign from <see cref="IConvertible"/> </typeparam>
     public class RedisSortedSet<TValue> : ReadOnlySortedSet<TValue> where TValue : IConvertible {
-        public RedisSortedSet(IDatabase database, string setKey) : base(database, setKey) {
-        }
+        public RedisSortedSet (IDatabase database, string setKey) : base (database, setKey) { }
 
         #region Sync Methods
 
@@ -23,8 +22,8 @@ namespace Redis.Net.Generic {
         /// <param name="member"></param>
         /// <param name="score"></param>
         /// <returns></returns>
-        public bool Add(TValue member, double score) {
-            return Database.SortedSetAdd(this.SetKey, RedisValue.Unbox(member), score);
+        public bool Add (TValue member, double score) {
+            return Database.SortedSetAdd (this.SetKey, RedisValue.Unbox (member), score);
         }
 
         /// <summary>
@@ -33,8 +32,8 @@ namespace Redis.Net.Generic {
         /// </summary>
         /// <param name="values"></param>
         /// <returns></returns>
-        public long Add(params KeyValuePair<TValue, double>[] values) {
-            return Database.SortedSetAdd(this.SetKey, values.Select(kv => new SortedSetEntry(RedisValue.Unbox(kv.Key), kv.Value)).ToArray());
+        public long Add (params KeyValuePair<TValue, double>[] values) {
+            return Database.SortedSetAdd (this.SetKey, values.Select (kv => new SortedSetEntry (RedisValue.Unbox (kv.Key), kv.Value)).ToArray ());
         }
 
         /// <summary>
@@ -43,8 +42,8 @@ namespace Redis.Net.Generic {
         /// </summary>
         /// <param name="values"></param>
         /// <returns></returns>
-        public long Add(params SortedSetEntry<TValue>[] values) {
-            return Database.SortedSetAdd(this.SetKey, values.Select(v => v.ToEntry()).ToArray());
+        public long Add (params SortedSetEntry<TValue>[] values) {
+            return Database.SortedSetAdd (this.SetKey, values.Select (v => v.ToEntry ()).ToArray ());
         }
 
         /// <summary>
@@ -52,8 +51,8 @@ namespace Redis.Net.Generic {
         /// </summary>
         /// <param name="members"></param>
         /// <returns></returns>
-        public long Remove(params TValue[] members) {
-            return Database.SortedSetRemove(this.SetKey, members.Select(m => RedisValue.Unbox(m)).ToArray());
+        public long Remove (params TValue[] members) {
+            return Database.SortedSetRemove (this.SetKey, members.Select (m => RedisValue.Unbox (m)).ToArray ());
         }
 
         /// <summary>
@@ -62,8 +61,8 @@ namespace Redis.Net.Generic {
         /// </summary>
         /// <param name="start">The minimum rank to remove.</param>
         /// <param name="stop">The maximum rank to remove.</param>
-        public long RemoveRangeByRank(long start, long stop) {
-            return Database.SortedSetRemoveRangeByRank(this.SetKey, start, stop);
+        public long RemoveRangeByRank (long start, long stop) {
+            return Database.SortedSetRemoveRangeByRank (this.SetKey, start, stop);
         }
 
         /// <summary>
@@ -72,10 +71,9 @@ namespace Redis.Net.Generic {
         /// <param name="start">The minimum score to remove.</param>
         /// <param name="stop">The maximum score to remove.</param>
         /// <param name="exclude">Which of <paramref name="start" /> and <paramref name="stop" /> to exclude (defaults to both inclusive).</param>
-        public long RemoveRangeByScore(double start, double stop, Exclude exclude = Exclude.None) {
-            return Database.SortedSetRemoveRangeByScore(this.SetKey, start, stop, exclude);
+        public long RemoveRangeByScore (double start, double stop, Exclude exclude = Exclude.None) {
+            return Database.SortedSetRemoveRangeByScore (this.SetKey, start, stop, exclude);
         }
-
 
         /// <summary>
         /// Removes all elements in the sorted set stored at key with a score between min and max (inclusive by default).
@@ -83,8 +81,8 @@ namespace Redis.Net.Generic {
         /// <param name="min">The minimum value to remove.</param>
         /// <param name="max">The maximum value to remove.</param>
         /// <param name="exclude">Which of <paramref name="min" /> and <paramref name="max" /> to exclude (defaults to both inclusive).</param>
-        public long RemoveRangeByValue(RedisValue min, RedisValue max, Exclude exclude = Exclude.None) {
-            return Database.SortedSetRemoveRangeByValue(this.SetKey, min, max, exclude);
+        public long RemoveRangeByValue (RedisValue min, RedisValue max, Exclude exclude = Exclude.None) {
+            return Database.SortedSetRemoveRangeByValue (this.SetKey, min, max, exclude);
         }
 
         /// <summary>
@@ -94,8 +92,8 @@ namespace Redis.Net.Generic {
         /// <param name="member"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public double Increment(TValue member, double value) {
-            return Database.SortedSetIncrement(this.SetKey, RedisValue.Unbox(member), value);
+        public double Increment (TValue member, double value) {
+            return Database.SortedSetIncrement (this.SetKey, RedisValue.Unbox (member), value);
         }
 
         /// <summary>
@@ -105,8 +103,8 @@ namespace Redis.Net.Generic {
         /// <param name="member"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public double Decrement(TValue member, double value) {
-            return Database.SortedSetDecrement(this.SetKey, RedisValue.Unbox(member), value);
+        public double Decrement (TValue member, double value) {
+            return Database.SortedSetDecrement (this.SetKey, RedisValue.Unbox (member), value);
         }
 
         #endregion
@@ -119,8 +117,8 @@ namespace Redis.Net.Generic {
         /// <param name="member"></param>
         /// <param name="score"></param>
         /// <returns></returns>
-        public async Task<bool> AddAsync(TValue member, double score) {
-            return await Database.SortedSetAddAsync(this.SetKey, RedisValue.Unbox(member), score);
+        public async Task<bool> AddAsync (TValue member, double score) {
+            return await Database.SortedSetAddAsync (this.SetKey, RedisValue.Unbox (member), score);
         }
 
         /// <summary>
@@ -129,8 +127,8 @@ namespace Redis.Net.Generic {
         /// </summary>
         /// <param name="values"></param>
         /// <returns></returns>
-        public async Task<long> AddAsync(params KeyValuePair<TValue, double>[] values) {
-            return await Database.SortedSetAddAsync(this.SetKey, values.Select(kv => new SortedSetEntry(RedisValue.Unbox(kv.Key), kv.Value)).ToArray());
+        public async Task<long> AddAsync (params KeyValuePair<TValue, double>[] values) {
+            return await Database.SortedSetAddAsync (this.SetKey, values.Select (kv => new SortedSetEntry (RedisValue.Unbox (kv.Key), kv.Value)).ToArray ());
         }
 
         /// <summary>
@@ -139,8 +137,8 @@ namespace Redis.Net.Generic {
         /// </summary>
         /// <param name="values"></param>
         /// <returns></returns>
-        public async Task<long> AddAsync(params SortedSetEntry<TValue>[] values) {
-            return await Database.SortedSetAddAsync(this.SetKey, values.Select(v => v.ToEntry()).ToArray());
+        public async Task<long> AddAsync (params SortedSetEntry<TValue>[] values) {
+            return await Database.SortedSetAddAsync (this.SetKey, values.Select (v => v.ToEntry ()).ToArray ());
         }
 
         /// <summary>
@@ -149,8 +147,8 @@ namespace Redis.Net.Generic {
         /// </summary>
         /// <param name="members"></param>
         /// <returns></returns>
-        public async Task<long> RemoveAsync(params TValue[] members) {
-            return await Database.SortedSetRemoveAsync(this.SetKey, members.Select(m => RedisValue.Unbox(m)).ToArray());
+        public async Task<long> RemoveAsync (params TValue[] members) {
+            return await Database.SortedSetRemoveAsync (this.SetKey, members.Select (m => RedisValue.Unbox (m)).ToArray ());
         }
 
         /// <summary>
@@ -159,8 +157,8 @@ namespace Redis.Net.Generic {
         /// </summary>
         /// <param name="start">The minimum rank to remove.</param>
         /// <param name="stop">The maximum rank to remove.</param>
-        public async Task<long> RemoveRangeByRankAsync(long start, long stop) {
-            return await Database.SortedSetRemoveRangeByRankAsync(this.SetKey, start, stop);
+        public async Task<long> RemoveRangeByRankAsync (long start, long stop) {
+            return await Database.SortedSetRemoveRangeByRankAsync (this.SetKey, start, stop);
         }
 
         /// <summary>
@@ -169,10 +167,9 @@ namespace Redis.Net.Generic {
         /// <param name="start">The minimum score to remove.</param>
         /// <param name="stop">The maximum score to remove.</param>
         /// <param name="exclude">Which of <paramref name="start" /> and <paramref name="stop" /> to exclude (defaults to both inclusive).</param>
-        public async Task<long> RemoveRangeByScoreAsync(double start, double stop, Exclude exclude = Exclude.None) {
-            return await Database.SortedSetRemoveRangeByScoreAsync(this.SetKey, start, stop, exclude);
+        public async Task<long> RemoveRangeByScoreAsync (double start, double stop, Exclude exclude = Exclude.None) {
+            return await Database.SortedSetRemoveRangeByScoreAsync (this.SetKey, start, stop, exclude);
         }
-
 
         /// <summary>
         /// Removes all elements in the sorted set stored at key with a score between min and max (inclusive by default).
@@ -180,8 +177,8 @@ namespace Redis.Net.Generic {
         /// <param name="min">The minimum value to remove.</param>
         /// <param name="max">The maximum value to remove.</param>
         /// <param name="exclude">Which of <paramref name="min" /> and <paramref name="max" /> to exclude (defaults to both inclusive).</param>
-        public async Task<long> RemoveRangeByValueAsync(RedisValue min, RedisValue max, Exclude exclude = Exclude.None) {
-            return await Database.SortedSetRemoveRangeByValueAsync(this.SetKey, min, max, exclude);
+        public async Task<long> RemoveRangeByValueAsync (RedisValue min, RedisValue max, Exclude exclude = Exclude.None) {
+            return await Database.SortedSetRemoveRangeByValueAsync (this.SetKey, min, max, exclude);
         }
 
         /// <summary>
@@ -191,8 +188,8 @@ namespace Redis.Net.Generic {
         /// <param name="member"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public Task<double> IncrementAsync(TValue member, double value) {
-            return Database.SortedSetIncrementAsync(this.SetKey, RedisValue.Unbox(member), value);
+        public Task<double> IncrementAsync (TValue member, double value) {
+            return Database.SortedSetIncrementAsync (this.SetKey, RedisValue.Unbox (member), value);
         }
 
         /// <summary>
@@ -202,27 +199,27 @@ namespace Redis.Net.Generic {
         /// <param name="member"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public Task<double> DecrementAsync(TValue member, double value) {
-            return Database.SortedSetDecrementAsync(this.SetKey, RedisValue.Unbox(member), value);
+        public Task<double> DecrementAsync (TValue member, double value) {
+            return Database.SortedSetDecrementAsync (this.SetKey, RedisValue.Unbox (member), value);
         }
 
         #endregion
 
         #region  Batch
-        public Task<bool> AddAsync(IBatch batch, TValue member, double score) {
-            return batch.SortedSetAddAsync(this.SetKey, RedisValue.Unbox(member), score);
+        public Task<bool> BatchAdd (IBatch batch, TValue member, double score) {
+            return batch.SortedSetAddAsync (this.SetKey, RedisValue.Unbox (member), score);
         }
 
-        public Task<long> AddAsync(IBatch batch, params KeyValuePair<TValue, double>[] values) {
-            return batch.SortedSetAddAsync(this.SetKey, values.Select(kv => new SortedSetEntry(RedisValue.Unbox(kv.Key), kv.Value)).ToArray());
+        public Task<long> BatchAdd (IBatch batch, params KeyValuePair<TValue, double>[] values) {
+            return batch.SortedSetAddAsync (this.SetKey, values.Select (kv => new SortedSetEntry (RedisValue.Unbox (kv.Key), kv.Value)).ToArray ());
         }
 
-        public Task<long> AddAsync(IBatch batch, params SortedSetEntry<TValue>[] values) {
-            return batch.SortedSetAddAsync(this.SetKey, values.Select(v => v.ToEntry()).ToArray());
+        public Task<long> BatchAdd (IBatch batch, params SortedSetEntry<TValue>[] values) {
+            return batch.SortedSetAddAsync (this.SetKey, values.Select (v => v.ToEntry ()).ToArray ());
         }
 
-        public Task<long> RemoveAsync(IBatch batch, params TValue[] members) {
-            return batch.SortedSetRemoveAsync(this.SetKey, members.Select(m => RedisValue.Unbox(m)).ToArray());
+        public Task<long> BatchRemove (IBatch batch, params TValue[] members) {
+            return batch.SortedSetRemoveAsync (this.SetKey, members.Select (m => RedisValue.Unbox (m)).ToArray ());
         }
 
         /// <summary>
@@ -233,8 +230,8 @@ namespace Redis.Net.Generic {
         /// <param name="member"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public Task<double> IncrementAsync(IBatch batch, TValue member, double value) {
-            return batch.SortedSetIncrementAsync(this.SetKey, RedisValue.Unbox(member), value);
+        public Task<double> BatchIncrement (IBatch batch, TValue member, double value) {
+            return batch.SortedSetIncrementAsync (this.SetKey, RedisValue.Unbox (member), value);
         }
 
         /// <summary>
@@ -245,10 +242,9 @@ namespace Redis.Net.Generic {
         /// <param name="member"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public Task<double> DecrementAsync(IBatch batch, TValue member, double value) {
-            return batch.SortedSetDecrementAsync(this.SetKey, RedisValue.Unbox(member), value);
+        public Task<double> BatchDecrement (IBatch batch, TValue member, double value) {
+            return batch.SortedSetDecrementAsync (this.SetKey, RedisValue.Unbox (member), value);
         }
-
 
         #endregion
     }
