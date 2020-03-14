@@ -1,4 +1,4 @@
-namespace Redis.Net.Generic
+namespace Redis.Net
 {
     public interface IBatchExecuter {
         /// <summary>

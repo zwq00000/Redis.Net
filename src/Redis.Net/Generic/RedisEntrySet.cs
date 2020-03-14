@@ -207,18 +207,23 @@ namespace Redis.Net.Generic
 
             #endregion
 
+            /// <summary>
+            /// careate batch methods instance
+            /// </summary>
+            /// <param name="batch"></param>
+            /// <returns></returns>
             public IBatchEntrySet<TKey, TValue> Batch (IBatch batch = null) {
                 if (batch == null) {
                     batch = Database.CreateBatch ();
                 }
-                return new BatchImplement (this, batch);
+                return new InnerBatchEntrySet (this, batch);
             }
 
-            class BatchImplement : IBatchEntrySet<TKey, TValue> {
+            class InnerBatchEntrySet : IBatchEntrySet<TKey, TValue> {
                 private readonly RedisEntrySet<TKey, TValue> owner;
                 private readonly IBatch batch;
 
-                public BatchImplement (RedisEntrySet<TKey, TValue> owner, IBatch batch) {
+                public InnerBatchEntrySet (RedisEntrySet<TKey, TValue> owner, IBatch batch) {
                     this.owner = owner;
                     this.batch = batch;
                 }

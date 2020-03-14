@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 using StackExchange.Redis;
 
-namespace Redis.Net.Generic
-{
+namespace Redis.Net {
     public interface IEntrySet<TKey, TValue> {
         /// <summary>
         /// 增加实体集合的批处理方法
