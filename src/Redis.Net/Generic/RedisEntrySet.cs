@@ -97,6 +97,33 @@ namespace Redis.Net.Generic {
 
             #endregion
 
+            #region AddAsync
+
+            /// <summary>
+            /// 增加实体集合的批处理方法,用户可以自定义 Entity to HashEntry[] 的方式
+            /// </summary>
+            /// <param name="key"></param>
+            /// <param name="entries"></param>
+            /// <returns></returns>
+            public async Task AddAsync (TKey key, IEnumerable<HashEntry> entries) {
+                var setKey = GetEntryKey (key);
+                await Database.HashSetAsync (setKey, entries.ToArray ());
+                await OnAddedAsync(key);
+            }
+
+            /// <summary>
+            /// 更新实体集合的批处理方法,用户可以自定义 Entity to HashEntry[] 的方式
+            /// </summary>
+            /// <param name="key"></param>
+            /// <param name="entries"></param>
+            /// <returns></returns>
+            public async Task UpdateAsync (TKey key, IEnumerable<HashEntry> entries) {
+                 var setKey = GetEntryKey (key);
+                await Database.HashSetAsync (setKey, entries.ToArray());
+            }
+
+            #endregion
+
             #region Batch
 
             /// <summary>
