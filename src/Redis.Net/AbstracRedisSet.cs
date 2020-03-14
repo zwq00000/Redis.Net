@@ -137,10 +137,29 @@ namespace Redis.Net {
             }
         }
 
-        /// <summary>Removes all items.</summary>
+        /// <summary>
+        /// 异步删除集合.
+        /// <seealso cref="IDatabaseAsync.KeyDeleteAsync(RedisKey, CommandFlags)" />
+        /// </summary>
+        /// <remarks>
+        /// Removes the specified key. A key is ignored if it does not exist. 
+        /// If UNLINK is available (Redis 4.0+), it will be used.
+        /// </remarks>
         /// <exception cref="T:System.NotSupportedException">The <see cref="T:System.Collections.Generic.ICollection`1"></see> is read-only.</exception>
         public Task<bool> ClearAllAsync (IBatch batch) {
             return batch.KeyDeleteAsync (SetKey);
+        }
+
+        /// <summary>
+        /// 异步删除集合 <seealso cref="IDatabaseAsync.KeyDeleteAsync(RedisKey, CommandFlags)" />
+        /// </summary>
+        /// <remarks>
+        /// Removes the specified key. A key is ignored if it does not exist. 
+        /// If UNLINK is available (Redis 4.0+), it will be used.
+        /// </remarks>
+        /// <returns></returns>
+        public async Task<bool> ClearAllAsync(){
+            return await Database.KeyDeleteAsync(SetKey);
         }
 
         /// <summary>Removes all items.</summary>

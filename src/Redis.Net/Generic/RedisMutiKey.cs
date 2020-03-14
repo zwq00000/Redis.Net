@@ -34,12 +34,29 @@ namespace Redis.Net.Redis.Generic {
         /// <summary>
         /// 重建索引,
         /// </summary>
+        /// 该方法根据 <see cref="BaseKey"/> 查找以 {BaseKey}开头的键
+        /// 删除当前集合索引并加入所有以 {BaseKey}开头的键(不包括 索引集合键)
         /// <returns></returns>
-        public async Task RebuldIndexAsync (Func<string, TKey> convert) {
+        public async Task RebuildIndexAsync (Func<string, TKey> convert) {
+            var entityKeys = ResolveEntiyKeys ().Select (k => convert (k));
+            await _indexSet.ClearAllAsync ();
+            await _indexSet.AddAsync (entityKeys.ToArray ());
+        }
+
+        /// <summary>
+        /// 重建索引
+        /// </summary>
+        /// <remarks>
+        /// 该方法根据 <see cref="BaseKey"/> 查找以 {BaseKey}开头的键
+        /// 删除当前集合索引并加入所有以 {BaseKey}开头的键(不包括 索引集合键)
+        /// </remarks>
+        /// <returns></returns>
+        public void RebuildIndex (Func<string, TKey> convert) {
             var entityKeys = ResolveEntiyKeys ().Select (k => convert (k));
             var batch = Database.CreateBatch ();
-            _indexSet.ClearAll ();
-            await _indexSet.AddAsync (entityKeys.ToArray ());
+            var task1 = _indexSet.ClearAllAsync (batch);
+            var task2 = _indexSet.AddAsync (batch, entityKeys.ToArray ());
+            batch.Execute ();
         }
 
         /// <summary>
@@ -272,6 +289,9 @@ namespace Redis.Net.Redis.Generic {
             return await Database.GetKeysAsync (this.BaseKey);
         }
 
+        /// <summary>
+        /// RedisMutiKey 管理的数据库键数量
+        /// </summary>
         public int Count => IndexSet.Count;
     }
 }
