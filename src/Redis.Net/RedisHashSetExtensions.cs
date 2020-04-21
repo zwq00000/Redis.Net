@@ -90,7 +90,7 @@ namespace Redis.Net {
                 prop.SetValue (instance, timeSpan);
                 return;
             }
-            var propValue = ((IConvertible) value).ToType (prop.PropertyType, CultureInfo.InvariantCulture);
+            var propValue = ToType (value, prop.PropertyType, CultureInfo.InvariantCulture);
             prop.SetValue (instance, propValue);
         }
 
@@ -185,35 +185,73 @@ namespace Redis.Net {
                 case RedisValue v:
                     value = v;
                     break;
+                case DateTime date:
+                    //符合 ISO8601
+                    value = date.ToString ("O");
+                    break;
+                case TimeSpan time:
+                    value = time.Ticks;
+                    break;
+                case Enum enumVal:
+                    value = (int) obj;
+                    break;
                 default:
-                    return TryParseExtension (obj, out value);
+                    value = RedisValue.Null;
+                    break;
             }
 
-            return true;
+            return value != RedisValue.Null;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        private static bool TryParseExtension (object obj, out RedisValue value) {
-            if (obj.GetType ().IsEnum) {
-                value = (int) obj;
-                return true;
+        private static object ToType (RedisValue value, Type conversionType, IFormatProvider provider) {
+            if (value.IsNull) {
+                return null;
             }
-            if (obj is DateTime date) {
-                value = date.ToString ();
-                return true;
-            }
-            if (obj is TimeSpan time) {
-                value = time.Ticks;
-                return true;
+            if (conversionType == null) throw new ArgumentNullException (nameof (conversionType));
+            var underlyingType = Nullable.GetUnderlyingType (conversionType);
+            if (underlyingType != null) {
+                conversionType = underlyingType;
             }
 
-            value = RedisValue.Null;
-            return false;
+            if (conversionType == typeof (byte[])) return (byte[]) value;
+            if (conversionType == typeof (ReadOnlyMemory<byte>)) return (ReadOnlyMemory<byte>) value;
+            if (conversionType == typeof (RedisValue)) return value;
+            switch (System.Type.GetTypeCode (conversionType)) {
+                case TypeCode.Boolean:
+                    return (bool) value;
+                case TypeCode.Byte:
+                    return checked ((byte) (uint) value);
+                case TypeCode.Char:
+                    return checked ((char) (uint) value);
+                case TypeCode.DateTime:
+                    return DateTime.Parse ((string) value, provider);
+                case TypeCode.Decimal:
+                    return (decimal) value;
+                case TypeCode.Double:
+                    return (double) value;
+                case TypeCode.Int16:
+                    return (short) value;
+                case TypeCode.Int32:
+                    return (int) value;
+                case TypeCode.Int64:
+                    return (long) value;
+                case TypeCode.SByte:
+                    return (sbyte) value;
+                case TypeCode.Single:
+                    return (float) value;
+                case TypeCode.String:
+                    return (string) value;
+                case TypeCode.UInt16:
+                    return checked ((ushort) (uint) value);
+                case TypeCode.UInt32:
+                    return (uint) value;
+                case TypeCode.UInt64:
+                    return (ulong) value;
+                case TypeCode.Object:
+                    return value;
+                default:
+                    throw new NotSupportedException (conversionType.Name);
+            }
         }
 
         static class PropertiesCache<T> {
@@ -234,12 +272,12 @@ namespace Redis.Net {
 
             private static IEnumerable<PropertyInfo> GetProperties (Type type) {
                 return type.GetRuntimeProperties ()
-                    .Where (p => p.PropertyType.IsValueType 
-                            || p.PropertyType == typeof (string) 
-                            || p.PropertyType.IsEnum
-                            || p.PropertyType == typeof(byte[])
-                            || p.PropertyType == typeof(ReadOnlyMemory<byte>)
-                            || p.PropertyType == typeof(Memory<byte>)
+                    .Where (p => p.PropertyType.IsValueType ||
+                        p.PropertyType == typeof (string) ||
+                        p.PropertyType.IsEnum ||
+                        p.PropertyType == typeof (byte[]) ||
+                        p.PropertyType == typeof (ReadOnlyMemory<byte>) ||
+                        p.PropertyType == typeof (Memory<byte>)
                     );
             }
         }

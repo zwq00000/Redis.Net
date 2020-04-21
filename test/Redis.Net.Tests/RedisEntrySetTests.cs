@@ -65,7 +65,7 @@ namespace Redis.Net.Tests {
         public void TestAddBatch () {
             var set = new RedisEntrySet<int, MockEntity> (base.Database, SetKey);
             set.Clear ();
-            Assert.Equal (10, set.Count);
+            Assert.Equal (0, set.Count);
             var batchSet = set.Batch();
             foreach (var item in GetEntities (10)) {
                  batchSet.Add(item.Id, item);
