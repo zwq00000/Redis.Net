@@ -23,6 +23,17 @@ namespace Redis.Net {
         }
 
         /// <summary>
+        /// Add the specified member to the set stored at key. Specified members that are
+        /// already a member of this set are ignored. If key does not exist, a new set is
+        /// created before adding the specified members.
+        /// </summary>
+        /// <param name="entry">The geo value to store.</param>
+        /// <returns></returns>
+        public async Task<bool> AddAsync (GeoEntry entry) {
+            return await Database.GeoAddAsync (SetKey, entry);
+        }
+
+        /// <summary>
         /// Add the specified member to the set stored at key. 
         /// Specified members that are already a member of this set are ignored. 
         /// If key does not exist, a new set is created before adding the specified members.
