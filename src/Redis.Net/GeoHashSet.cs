@@ -29,7 +29,7 @@ namespace Redis.Net {
         /// </summary>
         /// <param name="entry"></param>
         /// <returns></returns>
-        public async Task<bool> AddAsync (GeoEntry entry) {
+        public async Task<bool> BatchAdd (GeoEntry entry) {
             return await Database.GeoAddAsync (SetKey, entry);
         }
 
@@ -62,8 +62,8 @@ namespace Redis.Net {
             return await Database.GeoAddAsync (SetKey, entries.ToArray ());
         }
 
-        public async Task<bool> AddAsync (double lng, double lat, RedisValue member) {
-            return await AddAsync (new GeoEntry (lng, lat, member));
+        public async Task<bool> BatchAdd (double lng, double lat, RedisValue member) {
+            return await BatchAdd (new GeoEntry (lng, lat, member));
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Redis.Net {
         /// <param name="batch"></param>
         /// <param name="shipId"></param>
         /// <returns></returns>
-        public Task RemoveAsync (IBatch batch, string shipId) {
+        public Task BatchRemove (IBatch batch, string shipId) {
             return batch.GeoRemoveAsync (SetKey, shipId);
         }
 
@@ -100,13 +100,13 @@ namespace Redis.Net {
         /// </summary>
         /// <example>
         /// var batch = database.CreateBatch();
-        /// set.AddAsync(batch,entry);
+        /// set.BatchAdd(batch,entry);
         /// batch.Execute();
         /// </example>
         /// <param name="batch"></param>
         /// <param name="entry"></param>
         /// <returns></returns>
-        public Task AddAsync (IBatch batch, GeoEntry entry) {
+        public Task BatchAdd (IBatch batch, GeoEntry entry) {
             return batch.GeoAddAsync (SetKey, entry);
         }
 
@@ -118,8 +118,8 @@ namespace Redis.Net {
         /// <param name="lat"></param>
         /// <param name="member"></param>
         /// <returns></returns>
-        public Task AddAsync (IBatch batch, double lng, double lat, RedisValue member) {
-            return AddAsync (batch, new GeoEntry (lng, lat, member));
+        public Task BatchAdd (IBatch batch, double lng, double lat, RedisValue member) {
+            return BatchAdd (batch, new GeoEntry (lng, lat, member));
         }
 
         #endregion

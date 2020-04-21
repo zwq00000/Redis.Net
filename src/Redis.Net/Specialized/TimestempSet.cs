@@ -2,8 +2,7 @@
 using System.Threading.Tasks;
 using StackExchange.Redis;
 
-namespace Redis.Net.Specialized
-{
+namespace Redis.Net.Specialized {
     /// <summary>
     /// 时间戳有序集合
     /// </summary>
@@ -75,11 +74,11 @@ namespace Redis.Net.Specialized
         /// <param name="member">sorted set member </param>
         /// <param name="timeStamp">AIS 时间戳</param>
         /// <returns></returns>
-        public Task<bool> AddAsync (IBatch batch, TKey member, int timeStamp) {
+        public Task<bool> BatchAdd (IBatch batch, TKey member, int timeStamp) {
             if (timeStamp == 0) {
                 timeStamp = DateTime.UtcNow.ToTimestamp ();
             }
-            return SortedSet.AddAsync (batch, member, (double) timeStamp);
+            return SortedSet.BatchAdd (batch, member, (double) timeStamp);
         }
 
         /// <summary>
@@ -89,8 +88,8 @@ namespace Redis.Net.Specialized
         /// <param name="member"></param>
         /// <param name="time"></param>
         /// <returns></returns>
-        public Task<bool> AddAsync (IBatch batch, TKey member, DateTime time) {
-            return SortedSet.AddAsync (batch, member, time.ToTimestamp ());
+        public Task<bool> BatchAdd (IBatch batch, TKey member, DateTime time) {
+            return SortedSet.BatchAdd (batch, member, time.ToTimestamp ());
         }
 
         /// <summary>
@@ -99,8 +98,8 @@ namespace Redis.Net.Specialized
         /// <param name="batch"></param>
         /// <param name="member"></param>
         /// <returns></returns>
-        public Task<long> RemoveAsync (IBatch batch, TKey member) {
-            return SortedSet.RemoveAsync (batch, member);
+        public Task<long> BatchRemove (IBatch batch, TKey member) {
+            return SortedSet.BatchRemove (batch, member);
         }
 
         #endregion

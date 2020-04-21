@@ -142,14 +142,14 @@ namespace Redis.Net.Generic {
         /// <summary>
         /// Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1"></see>.
         /// </summary>
-        public Task AddAsync(IBatch batch, TKey key, TValue value) {
+        public Task BatchAdd(IBatch batch, TKey key, TValue value) {
             return batch.HashSetAsync(SetKey, RedisValue.Unbox(key), RedisValue.Unbox(value));
         }
 
         /// <summary>
         /// Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1"></see>.
         /// </summary>
-        public Task AddAsync(IBatch batch, params Tuple<TKey, TValue>[] tuples) {
+        public Task BatchAdd(IBatch batch, params Tuple<TKey, TValue>[] tuples) {
             if (tuples == null || tuples.Length == 0) {
                 return Task.CompletedTask;
             }
@@ -162,7 +162,7 @@ namespace Redis.Net.Generic {
         /// <summary>
         /// Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1"></see>.
         /// </summary>
-        public Task AddAsync(IBatch batch, params KeyValuePair<TKey, TValue>[] tuples) {
+        public Task BatchAdd(IBatch batch, params KeyValuePair<TKey, TValue>[] tuples) {
             if (tuples == null || tuples.Length == 0) {
                 return Task.CompletedTask;
             }
@@ -178,7 +178,7 @@ namespace Redis.Net.Generic {
         /// <param name="batch"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        public Task<bool> RemoveAsync(IBatch batch, TKey key) {
+        public Task<bool> BatchRemove(IBatch batch, TKey key) {
             return batch.HashDeleteAsync(SetKey, RedisValue.Unbox(key));
         }
 
