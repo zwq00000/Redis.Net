@@ -54,8 +54,9 @@ namespace Redis.Net.Redis.Generic {
         public void RebuildIndex (Func<string, TKey> convert) {
             var entityKeys = ResolveEntiyKeys ().Select (k => convert (k));
             var batch = Database.CreateBatch ();
-            var task1 = _indexSet.BatchClearAll (batch);
-            var task2 = _indexSet.BatchAdd (batch, entityKeys.ToArray ());
+            var batchIndexSet = _indexSet.AsBatch();
+            var task1 = batchIndexSet.BatchClear (batch);
+            var task2 = batchIndexSet.BatchAdd (batch, entityKeys.ToArray ());
             batch.Execute ();
         }
 
@@ -96,19 +97,34 @@ namespace Redis.Net.Redis.Generic {
             return BaseKey.Append (key.ToString ());
         }
 
-        public bool Remove (TKey key) {
+        /// <summary>
+        /// 移除 Key,同时移除从 <c>_indexSet</c> 索引中移除
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        protected bool RemoveKey (TKey key) {
             var setKey = GetEntryKey (key);
             _indexSet.Remove (key);
             return Database.KeyDelete (setKey);
         }
 
-        protected async Task<bool> RemoveAsync (TKey key) {
+        /// <summary>
+        /// 异步移除 Key,同时移除从 <c>_indexSet</c> 索引中移除
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns>是否删除</returns>
+        protected async Task<bool> RemoveKeyAsync (TKey key) {
             var setKey = GetEntryKey (key);
             await _indexSet.RemoveAsync (key);
             return await Database.KeyDeleteAsync (setKey);
         }
 
-        protected async Task<long> RemoveAsync (params TKey[] keys) {
+        /// <summary>
+        /// 异步移除 Key,同时移除从 <c>_indexSet</c> 索引中移除
+        /// </summary>
+        /// <param name="keys"></param>
+        /// <returns>删除数量</returns>
+        protected async Task<long> RemoveKeyAsync (params TKey[] keys) {
             var setKeys = keys.Select (k => GetEntryKey (k)).ToArray ();
             await _indexSet.RemoveAsync (keys);
             return await Database.KeyDeleteAsync (setKeys);
@@ -149,7 +165,7 @@ namespace Redis.Net.Redis.Generic {
         /// </summary>
         /// <param name="keys"></param>
         /// <returns></returns>
-        protected long OnAdded (params TKey[] keys) {
+        protected long AddKeyIndex (params TKey[] keys) {
             return _indexSet.AddRange (keys);
         }
 
@@ -158,8 +174,66 @@ namespace Redis.Net.Redis.Generic {
         /// </summary>
         /// <param name="keys"></param>
         /// <returns></returns>
-        protected virtual Task<long> OnAddedAsync (params TKey[] keys) {
+        protected virtual Task<long> AddKeyIndexAsync (params TKey[] keys) {
             return _indexSet.AddAsync (keys);
+        }
+
+        /// <summary>
+        /// 清除索引
+        /// </summary>
+        protected void ClearKeyIndex () {
+            _indexSet.Clear ();
+        }
+
+        /// <summary>
+        /// 清除全部索引
+        /// </summary>
+        protected void ClearAllIndex () {
+            _indexSet.Clear ();
+            _expireIndexSet.Clear ();
+        }
+
+        /// <summary>
+        /// 设置过期时间
+        /// 如果<c>expiry</c>为空为清除超期时间
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="expiry"></param>
+        /// <returns></returns>
+        protected bool SetExpire (TKey key, TimeSpan? expiry) {
+            var setKey = GetEntryKey (key);
+            if (!Database.KeyExists (setKey)) {
+                //Key 不存在
+                return false;
+            }
+            if (expiry.HasValue) {
+                //移动setKey 到超期索引
+                Database.SetMove (_indexSet.SetKey, _expireIndexSet.SetKey, RedisValue.Unbox (key));
+                return Database.KeyExpire (setKey, expiry);
+            } else {
+                //清除过期时间
+                //移动setKey 到SetKey 索引
+                Database.SetMove (_expireIndexSet.SetKey, _indexSet.SetKey, RedisValue.Unbox (key));
+                return Database.KeyExpire (setKey, expiry);
+            }
+        }
+
+        protected async Task<bool> SetExpireAsync (TKey key, TimeSpan? expiry) {
+            var setKey = GetEntryKey (key);
+            if (!await Database.KeyExistsAsync (setKey)) {
+                //Key 不存在
+                return false;
+            }
+            if (expiry.HasValue) {
+                //移动setKey 到超期索引
+                await Database.SetMoveAsync (_indexSet.SetKey, _expireIndexSet.SetKey, RedisValue.Unbox (key));
+                return await Database.KeyExpireAsync (setKey, expiry);
+            } else {
+                //清除过期时间
+                //移动setKey 到SetKey 索引
+                await Database.SetMoveAsync (_expireIndexSet.SetKey, _indexSet.SetKey, RedisValue.Unbox (key));
+                return await Database.KeyExpireAsync (setKey, expiry);
+            }
         }
 
         #region Batch
@@ -171,7 +245,7 @@ namespace Redis.Net.Redis.Generic {
         /// <param name="keys"></param>
         /// <returns></returns>
         protected virtual Task<long> BatchOnAdded (IBatch batch, params TKey[] keys) {
-            return _indexSet.BatchAdd (batch, keys);
+            return _indexSet.AsBatch().BatchAdd (batch, keys);
         }
 
         /// <summary>
@@ -183,7 +257,7 @@ namespace Redis.Net.Redis.Generic {
         /// <returns></returns>
         protected Task AddHashSetBatch (IBatch batch, TKey key, IEnumerable<HashEntry> entries) {
             var setKey = GetEntryKey (key);
-            _indexSet.BatchAdd (batch, key);
+            _indexSet.AsBatch().BatchAdd (batch, key);
             batch.HashSetAsync (setKey, entries.ToArray ());
             return Task.CompletedTask;
         }
@@ -209,7 +283,7 @@ namespace Redis.Net.Redis.Generic {
         /// <returns></returns>
         protected Task<bool> RemoveBatch (IBatch batch, TKey key) {
             var setKey = GetEntryKey (key);
-            _indexSet.BatchRemove (batch, key);
+            _indexSet.AsBatch().BatchRemove (batch, key);
             return batch.KeyDeleteAsync (setKey);
         }
 
@@ -221,7 +295,7 @@ namespace Redis.Net.Redis.Generic {
         /// <returns></returns>
         protected Task<long> RemoveBatch (IBatch batch, TKey[] keys) {
             var setKeys = keys.Select (GetEntryKey).ToArray ();
-            _indexSet.BatchRemove (batch, keys);
+            _indexSet.AsBatch().BatchRemove (batch, keys);
             return batch.KeyDeleteAsync (setKeys);
         }
 

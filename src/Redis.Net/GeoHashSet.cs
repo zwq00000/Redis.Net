@@ -7,7 +7,7 @@ namespace Redis.Net {
     /// <summary>
     /// 可更新的 Redis GeoHash Set
     /// </summary>
-    public class GeoHashSet : ReadOnlyGeoHashSet {
+    public class GeoHashSet : ReadOnlyGeoHashSet, IAsyncGeoHashSet,IBatchGeoHashSet {
 
         public GeoHashSet (IDatabase database, string setKey) : base (database, setKey) { }
 
@@ -20,28 +20,6 @@ namespace Redis.Net {
         /// <returns></returns>
         public bool Add (GeoEntry entry) {
             return Database.GeoAdd (SetKey, entry);
-        }
-
-        /// <summary>
-        /// Add the specified member to the set stored at key. Specified members that are
-        /// already a member of this set are ignored. If key does not exist, a new set is
-        /// created before adding the specified members.
-        /// </summary>
-        /// <param name="entry">The geo value to store.</param>
-        /// <returns></returns>
-        public async Task<bool> AddAsync (GeoEntry entry) {
-            return await Database.GeoAddAsync (SetKey, entry);
-        }
-
-        /// <summary>
-        /// Add the specified member to the set stored at key. 
-        /// Specified members that are already a member of this set are ignored. 
-        /// If key does not exist, a new set is created before adding the specified members.
-        /// </summary>
-        /// <param name="entry"></param>
-        /// <returns></returns>
-        public async Task<bool> BatchAdd (GeoEntry entry) {
-            return await Database.GeoAddAsync (SetKey, entry);
         }
 
         /// <summary>
@@ -65,19 +43,6 @@ namespace Redis.Net {
         }
 
         /// <summary>
-        /// 异步批量增加
-        /// </summary>
-        /// <param name="entries"></param>
-        /// <returns></returns>
-        public async Task<long> AddRangeAsync (IEnumerable<GeoEntry> entries) {
-            return await Database.GeoAddAsync (SetKey, entries.ToArray ());
-        }
-
-        public async Task<bool> BatchAdd (double lng, double lat, RedisValue member) {
-            return await BatchAdd (new GeoEntry (lng, lat, member));
-        }
-
-        /// <summary>
         /// 从 GeoHash set 中移除一个位置
         /// </summary>
         /// <param name="member"></param>
@@ -86,13 +51,36 @@ namespace Redis.Net {
             return Database.GeoRemove (SetKey, member);
         }
 
-        public async Task<bool> RemoveAsync (RedisValue member) {
-            return await Database.GeoRemoveAsync (SetKey, member);
-        }
-
         public bool Clear () {
             return Database.KeyDelete (SetKey);
         }
+
+        #region  Async Methods
+
+        /// <summary>
+        /// Add the specified member to the set stored at key. Specified members that are
+        /// already a member of this set are ignored. If key does not exist, a new set is
+        /// created before adding the specified members.
+        /// </summary>
+        /// <param name="entry">The geo value to store.</param>
+        /// <returns></returns>
+        async Task<bool> IAsyncGeoHashSet.AddAsync (GeoEntry entry) {
+            return await Database.GeoAddAsync (SetKey, entry);
+        }
+
+        /// <summary>
+        /// 异步批量增加
+        /// </summary>
+        /// <param name="entries"></param>
+        /// <returns></returns>
+        async Task<long> IAsyncGeoHashSet.AddRangeAsync (IEnumerable<GeoEntry> entries) {
+            return await Database.GeoAddAsync (SetKey, entries.ToArray ());
+        }
+
+        async Task<bool> IAsyncGeoHashSet.RemoveAsync (RedisValue member) {
+            return await Database.GeoRemoveAsync (SetKey, member);
+        }
+        #endregion
 
         #region Batch Method
 
@@ -102,7 +90,7 @@ namespace Redis.Net {
         /// <param name="batch"></param>
         /// <param name="shipId"></param>
         /// <returns></returns>
-        public Task BatchRemove (IBatch batch, string shipId) {
+        Task IBatchGeoHashSet.BatchRemove (IBatch batch, string shipId) {
             return batch.GeoRemoveAsync (SetKey, shipId);
         }
 
@@ -117,7 +105,7 @@ namespace Redis.Net {
         /// <param name="batch"></param>
         /// <param name="entry"></param>
         /// <returns></returns>
-        public Task BatchAdd (IBatch batch, GeoEntry entry) {
+        Task IBatchGeoHashSet.BatchAdd (IBatch batch, GeoEntry entry) {
             return batch.GeoAddAsync (SetKey, entry);
         }
 
@@ -129,10 +117,26 @@ namespace Redis.Net {
         /// <param name="lat"></param>
         /// <param name="member"></param>
         /// <returns></returns>
-        public Task BatchAdd (IBatch batch, double lng, double lat, RedisValue member) {
-            return BatchAdd (batch, new GeoEntry (lng, lat, member));
+        Task IBatchGeoHashSet.BatchAdd (IBatch batch, double lng, double lat, RedisValue member) {
+            return ((IBatchGeoHashSet) this).BatchAdd (batch, new GeoEntry (lng, lat, member));
         }
 
         #endregion
+
+        /// <summary>
+        /// 获取 <see cref="IBatchGeoHashSet">批处理接口</see>
+        /// </summary>
+        /// <returns></returns>
+        public IBatchGeoHashSet AsBatch () {
+            return this;
+        }
+
+        /// <summary>
+        /// 获取 <see cref="IAsyncGeoHashSet">异步接口</see>
+        /// </summary>
+        /// <returns></returns>
+        public IAsyncGeoHashSet AsAsync(){
+            return this;
+        }
     }
 }
