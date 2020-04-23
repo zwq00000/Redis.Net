@@ -91,37 +91,40 @@ namespace Redis.Net {
         }
 
         /// <summary>
-        /// Set a timeout on key. After the timeout has expired, the key will automatically be deleted. 
-        /// A key with an associated timeout is said to be volatile in Redis terminology.
+        /// Returns the remaining time to live of a key that has a timeout
         /// </summary>
-        /// <param name="expiry">The timeout to set.</param>
-        /// <returns>1 if the timeout was set. 0 if key does not exist or the timeout could not be set.</returns>
-        /// <remarks>If key is updated before the timeout has expired, then the timeout is removed as if the PERSIST command was invoked on key.
-        /// For Redis versions &lt; 2.1.3, existing timeouts cannot be overwritten. So, if key already has an associated timeout, it will do nothing and return 0. Since Redis 2.1.3, you can update the timeout of a key. It is also possible to remove the timeout using the PERSIST command. See the page on key expiry for more information.</remarks>
-        /// <remarks>https://redis.io/commands/expire</remarks>
-        /// <remarks>https://redis.io/commands/pexpire</remarks>
-        /// <remarks>https://redis.io/commands/persist</remarks>
-        private void SetExpire (TimeSpan expiry) {
-            Database.KeyExpire (SetKey, expiry);
-        }
+        /// <returns></returns>
+        public TimeSpan? TTL => Database.KeyTimeToLive (SetKey);
 
-        private async Task<bool> SetExpireAsync (TimeSpan expiry) {
-            return await Database.KeyExpireAsync (SetKey, expiry);
+        /// <summary>
+        /// 在更新操作中检查超期设置
+        /// </summary>
+        protected void CheckExpire (IBatch batch = null) {
+            if (_expire.HasValue) {
+                if (batch != null) {
+                    batch.KeyExpireAsync (SetKey, _expire.Value);
+                } else {
+                    Database.KeyExpire (SetKey, _expire.Value);
+                }
+            }
         }
 
         /// <summary>
-        /// Set a timeout on key. After the timeout has expired, the key will automatically be deleted. 
-        /// A key with an associated timeout is said to be volatile in Redis terminology.
+        /// 在更新操作中检查超期设置
         /// </summary>
-        /// <param name="absoluteTime"></param>
-        private void SetExpire (DateTime absoluteTime) {
-            Database.KeyExpire (SetKey, absoluteTime);
+        /// <param name="batch"></param>
+        /// <returns></returns>
+        protected async Task CheckExpireAsync (IBatch batch = null) {
+            if (_expire.HasValue) {
+                await Database.KeyExpireAsync (SetKey, _expire.Value);
+            }
         }
 
         /// <summary>
         /// 清除超期设置
         /// </summary>
         public void ClearExpire () {
+            this._expire = null;
             Database.KeyExpire (SetKey, (TimeSpan?) null);
         }
 
@@ -138,19 +141,6 @@ namespace Redis.Net {
         }
 
         /// <summary>
-        /// 异步删除集合.
-        /// <seealso cref="IDatabaseAsync.KeyDeleteAsync(RedisKey, CommandFlags)" />
-        /// </summary>
-        /// <remarks>
-        /// Removes the specified key. A key is ignored if it does not exist. 
-        /// If UNLINK is available (Redis 4.0+), it will be used.
-        /// </remarks>
-        /// <exception cref="T:System.NotSupportedException">The <see cref="T:System.Collections.Generic.ICollection`1"></see> is read-only.</exception>
-        public Task<bool> BatchClearAll (IBatch batch) {
-            return batch.KeyDeleteAsync (SetKey);
-        }
-
-        /// <summary>
         /// 异步删除集合 <seealso cref="IDatabaseAsync.KeyDeleteAsync(RedisKey, CommandFlags)" />
         /// </summary>
         /// <remarks>
@@ -158,14 +148,25 @@ namespace Redis.Net {
         /// If UNLINK is available (Redis 4.0+), it will be used.
         /// </remarks>
         /// <returns></returns>
-        public async Task<bool> ClearAllAsync(){
-            return await Database.KeyDeleteAsync(SetKey);
+        public async Task<bool> DeleteAsync () {
+            return await Database.KeyDeleteAsync (SetKey);
         }
 
-        /// <summary>Removes all items.</summary>
+        /// <summary>
+        /// Removes all items.
+        /// </summary>
         /// <exception cref="T:System.NotSupportedException">The <see cref="T:System.Collections.Generic.ICollection`1"></see> is read-only.</exception>
-        public void ClearAll () {
-            Database.KeyDelete (SetKey);
+        public bool Delete () {
+            return Database.KeyDelete (SetKey);
+        }
+
+        /// <summary>
+        /// 在批命令上下文中执行清理操作
+        /// </summary>
+        /// <param name="batch"></param>
+        /// <returns></returns>
+        public Task<bool> BatchDelete (IBatch batch) {
+            return batch.KeyDeleteAsync (SetKey);
         }
     }
 }

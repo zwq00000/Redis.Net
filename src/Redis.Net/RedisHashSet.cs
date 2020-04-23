@@ -1,8 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using StackExchange.Redis;
 
 namespace Redis.Net {
-    public class RedisHashSet : ReadOnlyRedisHashSet {
+    public class RedisHashSet : ReadOnlyRedisHashSet, IHashSet<RedisValue, RedisValue> {
 
         public RedisHashSet (IDatabase database, RedisKey setKey) : base (database, setKey) { }
 
@@ -93,6 +96,36 @@ namespace Redis.Net {
         /// <returns></returns>
         public double Increment (RedisValue hashField, double value) {
             return Database.HashIncrement (SetKey, hashField, value);
+        }
+
+        public void Add (params Tuple<RedisValue, RedisValue>[] tuples) {
+            if (tuples == null || tuples.Length == 0) {
+                return;
+            }
+            var entities = tuples.Select (t => new HashEntry (t.Item1, t.Item2))
+                .ToArray ();
+            Database.HashSet (SetKey, entities);
+        }
+
+        public void Add (params KeyValuePair<RedisValue, RedisValue>[] pairs) {
+            if (pairs == null || pairs.Length == 0) {
+                return;
+            }
+            var entities = pairs.Select (t => new HashEntry (t.Key, t.Value))
+                .ToArray ();
+            Database.HashSet (SetKey, entities);
+        }
+
+        /// <summary>
+        /// Decrement the specified field of an hash stored at key, and representing a floating
+        ///     point number, by the specified decrement. If the field does not exist, it is
+        ///     set to 0 before performing the operation.
+        /// </summary>
+        /// <param name="hashField"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public long Decrement (RedisValue hashField, long value = 1) {
+            return Database.HashDecrement (this.SetKey, RedisValue.Unbox (hashField), value);
         }
 
         #endregion

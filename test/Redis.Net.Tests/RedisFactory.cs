@@ -3,7 +3,12 @@ using StackExchange.Redis;
 
 namespace Redis.Net.Tests {
     public class RedisFactory {
+
+#if DEBUG
+        const string RedisServerName = "192.168.1.15";
+#else
         const string RedisServerName = "localhost";
+#endif
         protected IDatabase Database { get; }
 
         public RedisFactory () {

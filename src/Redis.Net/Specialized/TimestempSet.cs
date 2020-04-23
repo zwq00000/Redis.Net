@@ -34,7 +34,7 @@ namespace Redis.Net.Specialized {
         /// 增加记录的异步方法
         ///</summary>
         public async Task<bool> AddAsync (TKey member, DateTime time) {
-            return await SortedSet.AddAsync (member, time.ToTimestamp ());
+            return await SortedSet.AsAsync().AddAsync (member, time.ToTimestamp ());
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Redis.Net.Specialized {
         /// <param name="timestemp"></param>
         /// <returns>true 增加成功, false shipId 已经存在,更新时间戳</returns>
         public async Task<bool> AddAsync (TKey member, int timestemp) {
-            return await SortedSet.AddAsync (member, timestemp);
+            return await SortedSet.AsAsync().AddAsync (member, timestemp);
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace Redis.Net.Specialized {
         /// <param name="member"></param>
         /// <returns></returns>
         public async Task<bool> RemoveAsync (TKey member) {
-            return await SortedSet.RemoveAsync (member) > 0;
+            return await SortedSet.AsAsync().RemoveAsync (member) > 0;
         }
 
         #region Batch Methods
@@ -78,7 +78,7 @@ namespace Redis.Net.Specialized {
             if (timeStamp == 0) {
                 timeStamp = DateTime.UtcNow.ToTimestamp ();
             }
-            return SortedSet.BatchAdd (batch, member, (double) timeStamp);
+            return SortedSet.AsBatch().BatchAdd (batch, member, (double) timeStamp);
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace Redis.Net.Specialized {
         /// <param name="time"></param>
         /// <returns></returns>
         public Task<bool> BatchAdd (IBatch batch, TKey member, DateTime time) {
-            return SortedSet.BatchAdd (batch, member, time.ToTimestamp ());
+            return SortedSet.AsBatch().BatchAdd (batch, member, time.ToTimestamp ());
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Redis.Net.Specialized {
         /// <param name="member"></param>
         /// <returns></returns>
         public Task<long> BatchRemove (IBatch batch, TKey member) {
-            return SortedSet.BatchRemove (batch, member);
+            return SortedSet.AsBatch().BatchRemove (batch, member);
         }
 
         #endregion

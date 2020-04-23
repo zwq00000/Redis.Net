@@ -1,15 +1,16 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using StackExchange.Redis;
 
-namespace Redis.Net.Generic
-{
+namespace Redis.Net.Generic {
     /// <summary>
     /// Redis HashSet Warpper
     /// </summary>
-    public class RedisEntrySet<TKey, TValue> : ReadOnlyEntrySet<TKey, TValue>, IDictionary<TKey, TValue>
+    public partial class RedisEntrySet<TKey, TValue> : ReadOnlyEntrySet<TKey, TValue>, IEntrySet<TKey, TValue>,
+        IAsyncEntrySet<TKey, TValue>, IBatchEntrySet<TKey, TValue>
         where TKey : IConvertible where TValue : new () {
             /// <summary>
             /// 构造方法
@@ -26,7 +27,7 @@ namespace Redis.Net.Generic
             public void Add (KeyValuePair<TKey, TValue> item) {
                 var setKey = GetEntryKey (item.Key);
                 Database.HashSet (setKey, item.Value.ToHashEntries ().ToArray ());
-                OnAdded (item.Key);
+                AddKeyIndex (item.Key);
             }
 
             /// <summary>Removes all items from the <see cref="T:System.Collections.Generic.ICollection`1"></see>.</summary>
@@ -34,7 +35,7 @@ namespace Redis.Net.Generic
             public void Clear () {
                 var keys = Keys.ToArray ();
                 foreach (var key in keys) {
-                    Remove (key);
+                    RemoveKey (key);
                 }
             }
 
@@ -64,12 +65,16 @@ namespace Redis.Net.Generic
                 }
             }
 
+            public bool Remove (TKey key) {
+                return base.RemoveKey (key);
+            }
+
             /// <summary>Removes the first occurrence of a specific object from the <see cref="T:System.Collections.Generic.ICollection`1"></see>.</summary>
             /// <param name="item">The object to remove from the <see cref="T:System.Collections.Generic.ICollection`1"></see>.</param>
             /// <returns>true if <paramref name="item">item</paramref> was successfully removed from the <see cref="T:System.Collections.Generic.ICollection`1"></see>; otherwise, false. This method also returns false if <paramref name="item">item</paramref> is not found in the original <see cref="T:System.Collections.Generic.ICollection`1"></see>.</returns>
             /// <exception cref="T:System.NotSupportedException">The <see cref="T:System.Collections.Generic.ICollection`1"></see> is read-only.</exception>
             public bool Remove (KeyValuePair<TKey, TValue> item) {
-                return Remove (item.Key);
+                return RemoveKey (item.Key);
             }
 
             /// <summary>Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1"></see> is read-only.</summary>
@@ -89,7 +94,7 @@ namespace Redis.Net.Generic
             public void Add (TKey key, TValue value) {
                 var setKey = GetEntryKey (key);
                 Database.HashSet (setKey, value.ToHashEntries ().ToArray ());
-                OnAdded (key);
+                AddKeyIndex (key);
             }
 
             /// <summary>Gets an <see cref="T:System.Collections.Generic.ICollection`1"></see> containing the values in the <see cref="T:System.Collections.Generic.IDictionary`2"></see>.</summary>
@@ -98,111 +103,21 @@ namespace Redis.Net.Generic
 
             #endregion
 
-            #region Async Methods
-
-            /// <summary>
-            /// 增加实体集合的批处理方法,用户可以自定义 Entity to HashEntry[] 的方式
-            /// </summary>
-            /// <param name="key"></param>
-            /// <param name="entries"></param>
-            /// <returns></returns>
-            public async Task AddAsync (TKey key, IEnumerable<HashEntry> entries) {
+            #region Implementation IEntrySet
+            public void Add (TKey key, IEnumerable<HashEntry> entries) {
                 var setKey = GetEntryKey (key);
-                await Database.HashSetAsync (setKey, entries.ToArray ());
-                await OnAddedAsync (key);
+                Database.HashSet (setKey, entries.ToArray ());
+                AddKeyIndex (key);
             }
 
-            /// <summary>
-            /// 更新实体集合的批处理方法,用户可以自定义 Entity to HashEntry[] 的方式
-            /// </summary>
-            /// <param name="key"></param>
-            /// <param name="entries"></param>
-            /// <returns></returns>
-            public async Task UpdateAsync (TKey key, IEnumerable<HashEntry> entries) {
+            public void Update (TKey key, IEnumerable<HashEntry> entries) {
                 var setKey = GetEntryKey (key);
-                await Database.HashSetAsync (setKey, entries.ToArray ());
+                Database.HashSet (setKey, entries.ToArray ());
+                AddKeyIndex (key);
             }
 
-            /// <summary>
-            /// 清理全部集合的异步方法
-            /// </summary>
-            /// <returns></returns>
-            public Task<long> ClearAsync () {
-                var keys = Keys.ToArray ();
-                return RemoveAsync (keys);
-            }
-
-            #endregion
-
-            #region Batch Methods
-
-            /// <summary>
-            /// 增加实体集合的批处理方法,用户可以自定义 Entity to HashEntry[] 的方式
-            /// </summary>
-            /// <param name="batch"></param>
-            /// <param name="key"></param>
-            /// <param name="entries"></param>
-            /// <returns></returns>
-            public Task BatchAdd (IBatch batch, TKey key, IEnumerable<HashEntry> entries) {
-                return base.AddHashSetBatch (batch, key, entries);
-            }
-
-            /// <summary>
-            /// 更新实体集合的批处理方法,用户可以自定义 Entity to HashEntry[] 的方式
-            /// </summary>
-            /// <param name="batch"></param>
-            /// <param name="key"></param>
-            /// <param name="entries"></param>
-            /// <returns></returns>
-            public Task BatchUpdate (IBatch batch, TKey key, IEnumerable<HashEntry> entries) {
-                return base.UpdateHashSetBatch (batch, key, entries);
-            }
-
-            /// <summary>
-            /// 增加实体集合的批处理方法
-            /// </summary>
-            /// <param name="batch"></param>
-            /// <param name="key"></param>
-            /// <param name="value"></param>
-            /// <returns></returns>
-            public Task BatchAdd (IBatch batch, TKey key, TValue value) {
-                return base.AddHashSetBatch (batch, key, value.ToHashEntries ());
-            }
-
-            /// <summary>
-            /// 删除实体集合的批处理方法
-            /// </summary>
-            /// <param name="batch"></param>
-            /// <param name="key"></param>
-            /// <returns></returns>
-            public Task<bool> BatchRemove (IBatch batch, TKey key) {
-                return RemoveBatch (batch, key);
-            }
-
-            /// <summary>
-            /// 设置实体集合超时回收时间 的批处理方法
-            /// </summary>
-            /// <param name="batch"></param>
-            /// <param name="key">The key to set the expiration for.</param>
-            /// <param name="expiry">The exact date to expiry to set.</param>
-            /// <remarks>
-            /// Set a timeout on key. After the timeout has expired, the key will automatically
-            ///     be deleted. A key with an associated timeout is said to be volatile in Redis
-            ///     terminology.
-            ///</remarks>
-            ///  <returns></returns>
-            public Task<bool> BatchExpire (IBatch batch, TKey key, TimeSpan? expiry) {
-                return ExpireBatch (batch, key, expiry);
-            }
-
-            /// <summary>
-            /// 清理全部集合的批量方法
-            /// </summary>
-            /// <param name="batch"></param>
-            /// <returns></returns>
-            public Task<long> BatchClear (IBatch batch) {
-                var keys = Keys.ToArray ();
-                return RemoveBatch (batch, keys);
+            public void Expire (TKey key, TimeSpan? expiry) {
+                base.SetExpire (key, expiry);
             }
 
             #endregion
@@ -210,50 +125,13 @@ namespace Redis.Net.Generic
             /// <summary>
             /// careate batch methods instance
             /// </summary>
-            /// <param name="batch"></param>
             /// <returns></returns>
-            public IBatchEntrySet<TKey, TValue> Batch (IBatch batch = null) {
-                if (batch == null) {
-                    batch = Database.CreateBatch ();
-                }
-                return new InnerBatchEntrySet (this, batch);
+            public IBatchEntrySet<TKey, TValue> AsBatch () {
+                return (IBatchEntrySet<TKey, TValue>) this;
             }
 
-            class InnerBatchEntrySet : IBatchEntrySet<TKey, TValue> {
-                private readonly RedisEntrySet<TKey, TValue> owner;
-                private readonly IBatch batch;
-
-                public InnerBatchEntrySet (RedisEntrySet<TKey, TValue> owner, IBatch batch) {
-                    this.owner = owner;
-                    this.batch = batch;
-                }
-                public void Add (TKey key, IEnumerable<HashEntry> entries) {
-                    owner.AddHashSetBatch (batch, key, entries);
-                }
-
-                public void Add (TKey key, TValue value) {
-                    owner.AddHashSetBatch (batch, key, value.ToHashEntries ());
-                }
-
-                public void Clear () {
-                    owner.BatchClear (batch);
-                }
-
-                public void Execute () {
-                    batch.Execute ();
-                }
-
-                public void Expire (TKey key, TimeSpan? expiry) {
-                    owner.ExpireBatch (batch, key, expiry);
-                }
-
-                public void Remove (TKey key) {
-                    owner.RemoveBatch (batch, key);
-                }
-
-                public void Update (TKey key, IEnumerable<HashEntry> entries) {
-                    owner.UpdateHashSetBatch (batch, key, entries);
-                }
+            public IAsyncEntrySet<TKey, TValue> AsAsync () {
+                return (IAsyncEntrySet<TKey, TValue>) this;
             }
         }
 }

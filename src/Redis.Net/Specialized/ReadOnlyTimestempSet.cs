@@ -119,7 +119,7 @@ namespace Redis.Net.Specialized {
         /// <param name="time"></param>
         /// <returns></returns>
         public async Task<long> RemoveByOvertimeAsync(DateTime time) {
-            return await SortedSet.RemoveRangeByScoreAsync(0, time.ToTimestamp());
+            return await ((IAsyncSortSet<TKey>)SortedSet).RemoveRangeByScoreAsync(0, time.ToTimestamp());
         }
 
         /// <summary>
