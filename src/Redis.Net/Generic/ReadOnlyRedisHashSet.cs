@@ -1,9 +1,10 @@
+using StackExchange.Redis;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using StackExchange.Redis;
+using System.Threading.Tasks;
 
 namespace Redis.Net.Generic {
     /// <summary>
@@ -35,6 +36,32 @@ namespace Redis.Net.Generic {
 
         protected TValue ConvertValue(RedisValue value) {
             return _valueConvert(value);
+        }
+
+        /// <summary>
+        /// 根据键值批量返回数据
+        /// </summary>
+        /// <param name="keys"></param>
+        /// <returns></returns>
+        public IEnumerable<TValue> GetValues(params TKey[] keys) {
+            if (keys == null || keys.Length == 0) {
+                return new TValue[0];
+            }
+            return Database.HashGet(SetKey, keys.Select(k => RedisValue.Unbox(k)).ToArray())
+                 .Select(v => v.HasValue ? ConvertValue(v) : default(TValue));
+        }
+
+        /// <summary>
+        /// 根据键值批量返回数据的异步方法
+        /// </summary>
+        /// <param name="keys"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<TValue>> GetValuesAsync(params TKey[] keys) {
+            if (keys == null || keys.Length == 0) {
+                return new TValue[0];
+            }
+            var result = await Database.HashGetAsync(SetKey, keys.Select(k => RedisValue.Unbox(k)).ToArray());
+            return result.Select(v => v.HasValue ? ConvertValue(v) : default(TValue));
         }
 
         #region Implementation of IEnumerable

@@ -14,13 +14,13 @@ namespace Redis.Net {
         /// <param name="database"></param>
         /// <param name="keyPrefix"></param>
         /// <returns></returns>
-        public static RedisKey[] GetKeys(this IDatabase database, string keyPrefix) {
-            if (string.IsNullOrEmpty(keyPrefix)) {
-                throw new ArgumentNullException(nameof(keyPrefix));
+        public static RedisKey[] GetKeys (this IDatabase database, string keyPrefix) {
+            if (string.IsNullOrEmpty (keyPrefix)) {
+                throw new ArgumentNullException (nameof (keyPrefix));
             }
 
             var partten = $"{keyPrefix}*";
-            return (RedisKey[])database.Execute("KEYS", partten);
+            return (RedisKey[]) database.Execute ("KEYS", partten);
         }
 
         /// <summary>
@@ -29,12 +29,12 @@ namespace Redis.Net {
         /// <param name="database"></param>
         /// <param name="keyPrefix"></param>
         /// <returns></returns>
-        public static RedisKey[] GetKeys(this IDatabase database, RedisKey keyPrefix) {
-            if (string.IsNullOrEmpty(keyPrefix)) {
-                throw new ArgumentNullException(nameof(keyPrefix));
+        public static RedisKey[] GetKeys (this IDatabase database, RedisKey keyPrefix) {
+            if (string.IsNullOrEmpty (keyPrefix)) {
+                throw new ArgumentNullException (nameof (keyPrefix));
             }
-            var partten = keyPrefix.Append("*");
-            return (RedisKey[])database.Execute("KEYS", partten);
+            var partten = keyPrefix.Append ("*");
+            return (RedisKey[]) database.Execute ("KEYS", partten);
         }
 
         /// <summary>
@@ -43,13 +43,13 @@ namespace Redis.Net {
         /// <param name="database"></param>
         /// <param name="keyPrefix"></param>
         /// <returns></returns>
-        public static async Task<RedisKey[]> GetKeysAsync(this IDatabaseAsync database, string keyPrefix) {
-            if (string.IsNullOrEmpty(keyPrefix)) {
-                throw new ArgumentNullException(nameof(keyPrefix));
+        public static async Task<RedisKey[]> GetKeysAsync (this IDatabaseAsync database, string keyPrefix) {
+            if (string.IsNullOrEmpty (keyPrefix)) {
+                throw new ArgumentNullException (nameof (keyPrefix));
             }
 
             var partten = $"{keyPrefix}*";
-            return (RedisKey[])await database.ExecuteAsync("KEYS", partten);
+            return (RedisKey[]) await database.ExecuteAsync ("KEYS", partten);
         }
     }
 }

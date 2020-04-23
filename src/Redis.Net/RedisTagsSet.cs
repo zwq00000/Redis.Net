@@ -8,7 +8,7 @@ namespace Redis.Net {
     /// <summary>
     /// Redis Set for entityId:{tags} set
     /// </summary>
-    public class RedisTagsSet: RedisMutiKey {
+    public class RedisTagsSet : RedisMutiKey {
         private readonly IDatabase _database;
 
         /// <summary>
@@ -16,14 +16,13 @@ namespace Redis.Net {
         /// </summary>
         private const string DefaultKey = "Tags:";
 
-
-        public RedisTagsSet(IDatabase database, string baseKey = DefaultKey):base(database,baseKey) {
-            this._database = database;
+        public RedisTagsSet (IDatabase database, string baseKey = DefaultKey) : base (database, baseKey) {
+            _database = database;
         }
 
-        private RedisValue[] FilterTags(string[] tags) {
-            return tags.Where(t => !string.IsNullOrWhiteSpace(t))
-                .Select(t => (RedisValue)t.Trim()).ToArray();
+        private RedisValue[] FilterTags (string[] tags) {
+            return tags.Where (t => !string.IsNullOrWhiteSpace (t))
+                .Select (t => (RedisValue) t.Trim ()).ToArray ();
         }
 
         /// <summary>
@@ -31,15 +30,15 @@ namespace Redis.Net {
         /// </summary>
         /// <param name="entityId"></param>
         /// <param name="tags"></param>
-        public virtual long AddTags(string entityId, params string[] tags) {
-            if (string.IsNullOrEmpty(entityId)) {
-                throw new ArgumentNullException(nameof(entityId));
+        public virtual long AddTags (string entityId, params string[] tags) {
+            if (string.IsNullOrEmpty (entityId)) {
+                throw new ArgumentNullException (nameof (entityId));
             }
 
-            var setKey = GetSubKey(entityId);
-            var values = FilterTags(tags);
-            if (values.Any()) {
-                return _database.SetAdd(setKey, values);
+            var setKey = GetSubKey (entityId);
+            var values = FilterTags (tags);
+            if (values.Any ()) {
+                return _database.SetAdd (setKey, values);
             }
 
             return 0;
@@ -50,11 +49,11 @@ namespace Redis.Net {
         /// </summary>
         /// <param name="entityId"></param>
         /// <param name="tags"></param>
-        public virtual bool RemoveTags(string entityId,params string[] tags) {
-            var setKey = GetSubKey(entityId);
-            var values = FilterTags(tags);
-            if (values.Any()) {
-                return _database.SetRemove(setKey, values) == tags.Length;
+        public virtual bool RemoveTags (string entityId, params string[] tags) {
+            var setKey = GetSubKey (entityId);
+            var values = FilterTags (tags);
+            if (values.Any ()) {
+                return _database.SetRemove (setKey, values) == tags.Length;
             }
 
             return false;
@@ -65,8 +64,8 @@ namespace Redis.Net {
         /// </summary>
         /// <param name="entityId"></param>
         /// <returns></returns>
-        public virtual bool RemoveTags(string entityId) {
-            return base.Remove(entityId);
+        public virtual bool RemoveTags (string entityId) {
+            return Remove (entityId);
         }
 
         /// <summary>
@@ -74,11 +73,11 @@ namespace Redis.Net {
         /// </summary>
         /// <param name="entityId"></param>
         /// <returns></returns>
-        public IEnumerable<string> GetTags(string entityId) {
-            var setKey = GetSubKey(entityId);
-            return _database.SetMembers(setKey)
-                .Where(m => m.HasValue)
-                .Select(m => m.ToString());
+        public IEnumerable<string> GetTags (string entityId) {
+            var setKey = GetSubKey (entityId);
+            return _database.SetMembers (setKey)
+                .Where (m => m.HasValue)
+                .Select (m => m.ToString ());
         }
 
         /// <summary>
@@ -87,9 +86,9 @@ namespace Redis.Net {
         /// <param name="entityId"></param>
         /// <param name="tag"></param>
         /// <returns></returns>
-        public bool HasTag(string entityId, string tag) {
-            var setKey = GetSubKey(entityId);
-            return _database.SetContains(setKey, tag);
+        public bool HasTag (string entityId, string tag) {
+            var setKey = GetSubKey (entityId);
+            return _database.SetContains (setKey, tag);
         }
 
         /// <summary>
@@ -97,9 +96,9 @@ namespace Redis.Net {
         /// </summary>
         /// <param name="entityIds"></param>
         /// <returns></returns>
-        public IEnumerable<(string, IEnumerable<string>)> GetAll(IEnumerable<string> entityIds) {
-            foreach (var entityId in entityIds.Where(s => !string.IsNullOrEmpty(s))) {
-                yield return (entityId, GetTags(entityId));
+        public IEnumerable < (string, IEnumerable<string>) > GetAll (IEnumerable<string> entityIds) {
+            foreach (var entityId in entityIds.Where (s => !string.IsNullOrEmpty (s))) {
+                yield return (entityId, GetTags (entityId));
             }
         }
 
@@ -110,15 +109,15 @@ namespace Redis.Net {
         /// <param name="entityId"></param>
         /// <param name="tags"></param>
         /// <returns></returns>
-        public virtual async Task<long> AddTagAsync(string entityId, params string[] tags) {
-            if (string.IsNullOrEmpty(entityId)) {
-                throw new ArgumentNullException(nameof(entityId));
+        public virtual async Task<long> AddTagAsync (string entityId, params string[] tags) {
+            if (string.IsNullOrEmpty (entityId)) {
+                throw new ArgumentNullException (nameof (entityId));
             }
 
-            var setKey = GetSubKey(entityId);
-            var values = FilterTags(tags);
-            if (values.Any()) {
-                return await _database.SetAddAsync(setKey, values);
+            var setKey = GetSubKey (entityId);
+            var values = FilterTags (tags);
+            if (values.Any ()) {
+                return await _database.SetAddAsync (setKey, values);
             }
 
             return 0;
@@ -129,8 +128,8 @@ namespace Redis.Net {
         /// </summary>
         /// <param name="entityId"></param>
         /// <returns></returns>
-        public virtual async Task<bool> RemoveTagsAsync(string entityId) {
-            return await base.RemoveAsync(entityId);
+        public virtual async Task<bool> RemoveTagsAsync (string entityId) {
+            return await RemoveAsync (entityId);
         }
 
         /// <summary>
@@ -138,12 +137,11 @@ namespace Redis.Net {
         /// </summary>
         /// <param name="entityId"></param>
         /// <param name="tags"></param>
-        public virtual async Task<long> RemoveTagAsync(string entityId, params string[] tags) {
-            var setKey = GetSubKey(entityId);
-            var values = FilterTags(tags);
-            return await Database.SetRemoveAsync(setKey, values);
+        public virtual async Task<long> RemoveTagAsync (string entityId, params string[] tags) {
+            var setKey = GetSubKey (entityId);
+            var values = FilterTags (tags);
+            return await Database.SetRemoveAsync (setKey, values);
         }
-
 
         /// <summary>
         /// 是否包含标记
@@ -151,26 +149,26 @@ namespace Redis.Net {
         /// <param name="entityId"></param>
         /// <param name="tag"></param>
         /// <returns></returns>
-        public async Task<bool> HasTagAsync(string entityId, string tag) {
-            var setKey = GetSubKey(entityId);
-            return await Database.SetContainsAsync(setKey, tag);
+        public async Task<bool> HasTagAsync (string entityId, string tag) {
+            var setKey = GetSubKey (entityId);
+            return await Database.SetContainsAsync (setKey, tag);
         }
 
         #endregion
 
         #region batch
 
-        public virtual Task AddTagsBatch(IBatch batch, string entityId, params string[] tags) {
-            var setKey = GetSubKey(entityId);
-            var values = FilterTags(tags);
-            batch.SetAddAsync(setKey, values);
+        public virtual Task AddTagsBatch (IBatch batch, string entityId, params string[] tags) {
+            var setKey = GetSubKey (entityId);
+            var values = FilterTags (tags);
+            batch.SetAddAsync (setKey, values);
             return Task.CompletedTask;
         }
 
-        public virtual Task RemoveTagsBatch(IBatch batch, string entityId, params string[] tags) {
-            var setKey = GetSubKey(entityId);
-            var values = FilterTags(tags);
-            batch.SetRemoveAsync(setKey, values);
+        public virtual Task RemoveTagsBatch (IBatch batch, string entityId, params string[] tags) {
+            var setKey = GetSubKey (entityId);
+            var values = FilterTags (tags);
+            batch.SetRemoveAsync (setKey, values);
             return Task.CompletedTask;
         }
 

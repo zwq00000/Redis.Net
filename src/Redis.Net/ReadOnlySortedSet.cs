@@ -8,25 +8,24 @@ namespace Redis.Net {
     /// </summary>
     public class ReadOnlySortedSet : AbstracRedisKey {
 
-        public ReadOnlySortedSet(IDatabase database, string setKey):base(database,setKey,RedisType.SortedSet) {
+        public ReadOnlySortedSet (IDatabase database, string setKey) : base (database, setKey, RedisType.SortedSet) {
 
         }
-
 
         /// <summary>
         /// 获取集合全部键值
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<string> Keys() {
-            return this.GetRangeByRank().ToStringArray();
+        public IEnumerable<string> Keys () {
+            return GetRangeByRank ().ToStringArray ();
         }
 
         /// <summary>
         /// 异步获取集合全部键值
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<string>> KeysAsync() {
-            return (await this.GetRangeByRankAsync()).ToStringArray();
+        public async Task<IEnumerable<string>> KeysAsync () {
+            return (await GetRangeByRankAsync ()).ToStringArray ();
         }
 
         ///<summary>
@@ -37,8 +36,8 @@ namespace Redis.Net {
         ///<remarks>
         /// see https://redis.io/commands/zscore
         ///</remarks>
-        public double? GetScore(RedisValue member) {
-            return Database.SortedSetScore(SetKey, member);
+        public double? GetScore (RedisValue member) {
+            return Database.SortedSetScore (SetKey, member);
         }
 
         /// <summary>
@@ -47,8 +46,8 @@ namespace Redis.Net {
         /// </summary>
         /// <param name="member"></param>
         /// <returns></returns>
-        public async Task<double?> GetScoreAsync(RedisValue member) {
-            return await Database.SortedSetScoreAsync(SetKey, member);
+        public async Task<double?> GetScoreAsync (RedisValue member) {
+            return await Database.SortedSetScoreAsync (SetKey, member);
         }
 
         /// <summary>
@@ -59,8 +58,8 @@ namespace Redis.Net {
         /// <param name="cursor"></param>
         /// <param name="pageOffset"></param>
         /// <returns></returns>
-        public IEnumerable<SortedSetEntry> Scan(RedisValue pattern = default(RedisValue), int pageSize = 10, long cursor = 0, int pageOffset = 0) {
-            return Database.SortedSetScan(SetKey, pattern, pageSize, cursor, pageOffset);
+        public IEnumerable<SortedSetEntry> Scan (RedisValue pattern = default, int pageSize = 10, long cursor = 0, int pageOffset = 0) {
+            return Database.SortedSetScan (SetKey, pattern, pageSize, cursor, pageOffset);
         }
 
         /// <summary>
@@ -74,8 +73,8 @@ namespace Redis.Net {
         /// <param name="skip">How many items to skip.</param>
         /// <param name="take">How many items to take.</param>
         /// <returns>List of elements in the specified score range.</returns>
-        public RedisValue[] GetRangeByScore(double start = double.NegativeInfinity, double stop = double.PositiveInfinity, Exclude exclude = Exclude.None, Order order = Order.Ascending, long skip = 0, long take = -1) {
-            return Database.SortedSetRangeByScore(SetKey, start, stop, exclude, order, skip, take);
+        public RedisValue[] GetRangeByScore (double start = double.NegativeInfinity, double stop = double.PositiveInfinity, Exclude exclude = Exclude.None, Order order = Order.Ascending, long skip = 0, long take = -1) {
+            return Database.SortedSetRangeByScore (SetKey, start, stop, exclude, order, skip, take);
         }
 
         /// <summary>
@@ -92,8 +91,8 @@ namespace Redis.Net {
         /// <param name="skip">How many items to skip</param>
         /// <param name="take">How many items to take.</param>
         /// <returns></returns>
-        public async Task<RedisValue[]> GetRangeByScoreAsync(double start = double.NegativeInfinity, double stop = double.PositiveInfinity, Exclude exclude = Exclude.None, Order order = Order.Ascending, long skip = 0, long take = -1) {
-            return await Database.SortedSetRangeByScoreAsync(SetKey, start, stop, exclude, order, skip, take);
+        public async Task<RedisValue[]> GetRangeByScoreAsync (double start = double.NegativeInfinity, double stop = double.PositiveInfinity, Exclude exclude = Exclude.None, Order order = Order.Ascending, long skip = 0, long take = -1) {
+            return await Database.SortedSetRangeByScoreAsync (SetKey, start, stop, exclude, order, skip, take);
         }
 
         /// <summary>
@@ -106,8 +105,8 @@ namespace Redis.Net {
         /// <returns>List of elements in the specified range.</returns>
         /// <remarks>https://redis.io/commands/zrange</remarks>
         /// <remarks>https://redis.io/commands/zrevrange</remarks>
-        public RedisValue[] GetRangeByRank(long start = 0, long stop = -1, Order order = Order.Ascending) {
-            return Database.SortedSetRangeByRank(SetKey, start, stop, order);
+        public RedisValue[] GetRangeByRank (long start = 0, long stop = -1, Order order = Order.Ascending) {
+            return Database.SortedSetRangeByRank (SetKey, start, stop, order);
         }
 
         /// <summary>
@@ -120,32 +119,32 @@ namespace Redis.Net {
         /// <returns>List of elements in the specified range.</returns>
         /// <remarks>https://redis.io/commands/zrange</remarks>
         /// <remarks>https://redis.io/commands/zrevrange</remarks>
-        public async Task<RedisValue[]> GetRangeByRankAsync(long start = 0, long stop = -1, Order order = Order.Ascending) {
-            return await Database.SortedSetRangeByRankAsync(SetKey, start, stop, order);
+        public async Task<RedisValue[]> GetRangeByRankAsync (long start = 0, long stop = -1, Order order = Order.Ascending) {
+            return await Database.SortedSetRangeByRankAsync (SetKey, start, stop, order);
         }
 
         /// <summary>
         /// 获取集合数量
         /// </summary>
         /// <returns></returns>
-        public int GetCount(double min = double.NegativeInfinity, double max = double.PositiveInfinity, Exclude exclude = Exclude.None) {
-            return (int)Database.SortedSetLength(SetKey,min,max,exclude);
+        public int GetCount (double min = double.NegativeInfinity, double max = double.PositiveInfinity, Exclude exclude = Exclude.None) {
+            return (int) Database.SortedSetLength (SetKey, min, max, exclude);
         }
 
         /// <summary>
         /// 获取集合数量
         /// </summary>
         /// <returns></returns>
-        public long GetLongCount(double min = double.NegativeInfinity, double max = double.PositiveInfinity, Exclude exclude = Exclude.None) {
-            return Database.SortedSetLength(SetKey,min,max,exclude);
+        public long GetLongCount (double min = double.NegativeInfinity, double max = double.PositiveInfinity, Exclude exclude = Exclude.None) {
+            return Database.SortedSetLength (SetKey, min, max, exclude);
         }
 
         /// <summary>
         /// 获取集合数量的异步方法
         /// </summary>
         /// <returns></returns>
-        public async Task<long> CountAsync(double min = double.NegativeInfinity, double max = double.PositiveInfinity, Exclude exclude = Exclude.None) {
-            return await Database.SortedSetLengthAsync(SetKey,min,max,exclude);
+        public async Task<long> CountAsync (double min = double.NegativeInfinity, double max = double.PositiveInfinity, Exclude exclude = Exclude.None) {
+            return await Database.SortedSetLengthAsync (SetKey, min, max, exclude);
         }
     }
 }
