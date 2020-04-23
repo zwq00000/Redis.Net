@@ -1,5 +1,8 @@
 name: CI
-on: [push]
+on: 
+  push:
+    branches:
+      - master
 
 jobs:
   build:
@@ -25,24 +28,3 @@ jobs:
         with:
           dotnet-version: 2.2.108
       - run: dotnet test -c Release
-  
-  publish:
-    needs: [build]
-    runs-on: ubuntu-latest   
-    steps:
-    - uses: actions/checkout@v1
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 2.2.108
-    - name: Build with dotnet
-      run: dotnet build --configuration Release
-    - name: Package
-      shell: bash
-      run: |
-        subversion=`date +%Y%m%d-%H%m`
-        echo $subversion
-        dotnet pack src/Redis.Net -o ../../publish/ -c Release -p:PackageVersion=1.0.1-ci-$subversion
-    - name: publish nuget
-      run:
-        dotnet nuget push **/*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
