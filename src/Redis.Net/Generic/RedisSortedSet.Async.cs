@@ -66,7 +66,7 @@ namespace Redis.Net.Generic {
         /// <param name="start">The minimum score to remove.</param>
         /// <param name="stop">The maximum score to remove.</param>
         /// <param name="exclude">Which of <paramref name="start" /> and <paramref name="stop" /> to exclude (defaults to both inclusive).</param>
-        async Task<long> IAsyncSortSet<TValue>.RemoveRangeByScoreAsync (double start, double stop, Exclude exclude = Exclude.None) {
+        async Task<long> IAsyncSortSet<TValue>.RemoveRangeByScoreAsync (double start, double stop, Exclude exclude) {
             return await Database.SortedSetRemoveRangeByScoreAsync (this.SetKey, start, stop, exclude);
         }
 
@@ -76,7 +76,7 @@ namespace Redis.Net.Generic {
         /// <param name="min">The minimum value to remove.</param>
         /// <param name="max">The maximum value to remove.</param>
         /// <param name="exclude">Which of <paramref name="min" /> and <paramref name="max" /> to exclude (defaults to both inclusive).</param>
-        async Task<long> IAsyncSortSet<TValue>.RemoveRangeByValueAsync (RedisValue min, RedisValue max, Exclude exclude = Exclude.None) {
+        async Task<long> IAsyncSortSet<TValue>.RemoveRangeByValueAsync (RedisValue min, RedisValue max, Exclude exclude) {
             return await Database.SortedSetRemoveRangeByValueAsync (this.SetKey, min, max, exclude);
         }
 

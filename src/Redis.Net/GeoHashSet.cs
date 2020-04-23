@@ -52,7 +52,7 @@ namespace Redis.Net {
         }
 
         public bool Clear () {
-            return Database.KeyDelete (SetKey);
+            return base.Delete();
         }
 
         #region  Async Methods

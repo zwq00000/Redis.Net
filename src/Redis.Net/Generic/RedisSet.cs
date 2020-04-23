@@ -12,7 +12,7 @@ namespace Redis.Net.Generic {
 
         /// <inheritdoc />
         public void Clear () {
-            Database.KeyDelete (SetKey);
+           base.Delete();
         }
 
         /// <summary>

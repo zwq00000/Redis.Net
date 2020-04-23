@@ -39,7 +39,7 @@ namespace Redis.Net.Redis.Generic {
         /// <returns></returns>
         public async Task RebuildIndexAsync (Func<string, TKey> convert) {
             var entityKeys = ResolveEntiyKeys ().Select (k => convert (k));
-            await _indexSet.ClearAllAsync ();
+            await _indexSet.DeleteAsync ();
             await _indexSet.AddAsync (entityKeys.ToArray ());
         }
 

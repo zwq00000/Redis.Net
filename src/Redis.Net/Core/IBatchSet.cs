@@ -8,7 +8,6 @@ namespace Redis.Net {
     public interface IBatchSet<TValue> where TValue : IConvertible {
         Task<long> BatchAdd (IBatch batch, params TValue[] values);
         Task<long> BatchRemove (IBatch batch, params TValue[] values);
-
         Task<bool> BatchClear (IBatch batch);
     }
 
