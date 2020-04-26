@@ -158,14 +158,14 @@ namespace Redis.Net {
 
         #region batch
 
-        public virtual Task AddTagsBatch (IBatch batch, string entityId, params string[] tags) {
+        public virtual Task BatchAddTags (IBatch batch, string entityId, params string[] tags) {
             var setKey = GetSubKey (entityId);
             var values = FilterTags (tags);
             batch.SetAddAsync (setKey, values);
             return Task.CompletedTask;
         }
 
-        public virtual Task RemoveTagsBatch (IBatch batch, string entityId, params string[] tags) {
+        public virtual Task BatchRemoveTags (IBatch batch, string entityId, params string[] tags) {
             var setKey = GetSubKey (entityId);
             var values = FilterTags (tags);
             batch.SetRemoveAsync (setKey, values);

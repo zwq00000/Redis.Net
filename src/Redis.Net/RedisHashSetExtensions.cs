@@ -203,6 +203,10 @@ namespace Redis.Net {
             return value != RedisValue.Null;
         }
 
+        internal static TValue ConvertTo<TValue>(this RedisValue value) where TValue:IConvertible{
+            return (TValue)ToType(value,typeof(TValue),CultureInfo.InvariantCulture);
+        }
+
         private static object ToType (RedisValue value, Type conversionType, IFormatProvider provider) {
             if (value.IsNull) {
                 return null;
