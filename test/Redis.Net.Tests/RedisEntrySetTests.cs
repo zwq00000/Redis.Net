@@ -24,6 +24,7 @@ namespace Redis.Net.Tests {
                 this.Date = DateTime.Now;
                 this.Time = TimeSpan.FromMilliseconds (1 + id);
                 Bytes = Encoding.UTF8.GetBytes (msg);
+                Floats = new float[] { 1, 2, 3, 4, 5 };
             }
             public int Id { get; set; }
 
@@ -33,6 +34,8 @@ namespace Redis.Net.Tests {
             public TimeSpan Time { get; set; }
 
             public byte[] Bytes { get; set; }
+
+            public float[] Floats { get; set; }
         }
 
         string SetKey = "_Test:RedisEntrySet";
@@ -66,12 +69,12 @@ namespace Redis.Net.Tests {
             var set = new RedisEntrySet<int, MockEntity> (base.Database, SetKey);
             set.Clear ();
             Assert.Equal (0, set.Count);
-            var batch = Database.CreateBatch();
-            var batchSet = set.AsBatch();
+            var batch = Database.CreateBatch ();
+            var batchSet = set.AsBatch ();
             foreach (var item in GetEntities (10)) {
-                 batchSet.BatchAdd(batch, item.Id, item);
+                batchSet.BatchAdd (batch, item.Id, item);
             }
-            batch.Execute();
+            batch.Execute ();
             Assert.Equal (10, set.Count);
         }
 
@@ -85,6 +88,8 @@ namespace Redis.Net.Tests {
                 Assert.True (entity.Time.Ticks > 0);
                 Assert.NotNull (entity.Bytes);
                 Assert.Equal (entity.Message, Encoding.UTF8.GetString (entity.Bytes));
+                Assert.NotNull (entity.Floats);
+                Assert.Equal (5, entity.Floats.Length);
             }
         }
 
