@@ -15,15 +15,25 @@ namespace Redis.Net.Generic {
         internal const string IndexSetName = "@__Index";
         public InvertedIndexSet (IDatabase database, string baseKey) : base (database, baseKey) { }
 
+        /// <summary>
+        /// 重置索引
+        /// </summary>
+        public async Task ResetAsync (IBatch batch) {
+            var keys = await this.GetKeysAsync ();
+            foreach (var key in keys) {
+                var task = batch.KeyDeleteAsync (key);
+            }
+        }
+
         public IEnumerable<T> GetValues (RedisValue index) {
             var setKey = base.GetSubKey (index);
-            return Database.SetMembers (setKey).Where(m=>m.HasValue).Select (m => m.ConvertTo<T>());
+            return Database.SetMembers (setKey).Where (m => m.HasValue).Select (m => m.ConvertTo<T> ());
         }
 
         public async Task<IEnumerable<T>> GetValuesAsync (RedisValue index) {
             var setKey = base.GetSubKey (index);
             var members = await Database.SetMembersAsync (setKey);
-            return members.Where(m=>m.HasValue).Select (m => m.ConvertTo<T>());
+            return members.Where (m => m.HasValue).Select (m => m.ConvertTo<T> ());
         }
 
         public void Add (T id, params RedisValue[] values) {
