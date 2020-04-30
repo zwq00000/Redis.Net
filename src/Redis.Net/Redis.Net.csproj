@@ -15,7 +15,7 @@
   <PropertyGroup>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>1.0.3</Version>
-    <VersionSuffix>$(VersionSuffix)</VersionSuffix>
+    <VersionSuffix>beta</VersionSuffix>
     <PackageVersion>$(Version)-$(VersionSuffix)</PackageVersion>
     <Authors>zwq00000@hotmail.com</Authors>
     <Company>XiGe Digi Tech CO.</Company>
