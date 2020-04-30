@@ -23,4 +23,4 @@ jobs:
     - name: Package
       run: dotnet pack src/Redis.Net -o ../../publish/ --include-symbols --force -c Release
     - name: publish nuget
-      run: dotnet nuget push ./publish/Redis.Net.1.0.1.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
+      run: dotnet nuget push ./publish/Redis.Net.*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
