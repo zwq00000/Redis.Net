@@ -351,7 +351,7 @@ namespace Redis.Net {
 
             private static IEnumerable<PropertyInfo> GetProperties (Type type) {
                 return type.GetRuntimeProperties ()
-                    .Where (p => p.CanWrite && CanConverted (p.PropertyType));
+                    .Where (p => p.CanRead && CanConverted (p.PropertyType));
             }
             /// <summary>
             /// 可以被转换的属性类型
