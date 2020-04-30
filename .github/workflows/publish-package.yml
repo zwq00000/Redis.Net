@@ -3,7 +3,7 @@ name: publish package
 on:
   push:
     branches:
-    - master
+    - develop
 
 jobs:
   build:
@@ -21,6 +21,9 @@ jobs:
     - name: Build with dotnet
       run: dotnet build --configuration Release
     - name: Package
-      run: dotnet pack src/Redis.Net -o ../../publish/ --include-symbols --force -c Release
+      run: |
+        subversion=`date +%Y%m%d-%H%m`
+        echo $subversion
+        dotnet pack src/Redis.Net -o ../../publish/ --include-symbols -c Release -p:PackageVersion=1.0.1-ci-$subversion
     - name: publish nuget
-      run: dotnet nuget push ./publish/Redis.Net.1.0.1.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
+      run: dotnet nuget push ./publish/Redis.Net.*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
