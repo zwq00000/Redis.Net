@@ -5,13 +5,14 @@ using StackExchange.Redis.Extensions.Core.Configuration;
 using StackExchange.Redis.Extensions.Core.Implementations;
 using StackExchange.Redis.Extensions.MsgPack;
 
-namespace RedisExtensionsTests
-{
-    public class RedisFactory
-    {
+namespace RedisExtensionsTests {
+    public class RedisFactory {
+#if DEBUG
+        const string RedisServerName = "192.168.1.15";
+#else
         const string RedisServerName = "localhost";
-        readonly RedisConfiguration redisConfiguration = new RedisConfiguration()
-        {
+#endif
+        readonly RedisConfiguration redisConfiguration = new RedisConfiguration () {
             AbortOnConnectFail = true,
             KeyPrefix = "_my_key_prefix_",
             Hosts = new RedisHost[] {
@@ -21,11 +22,10 @@ namespace RedisExtensionsTests
             ConnectTimeout = 3000,
             Database = 0,
             Ssl = false,
-            ServerEnumerationStrategy = new ServerEnumerationStrategy()
-            {
-                Mode = ServerEnumerationStrategy.ModeOptions.All,
-                TargetRole = ServerEnumerationStrategy.TargetRoleOptions.Any,
-                UnreachableServerAction = ServerEnumerationStrategy.UnreachableServerActionOptions.Throw
+            ServerEnumerationStrategy = new ServerEnumerationStrategy () {
+            Mode = ServerEnumerationStrategy.ModeOptions.All,
+            TargetRole = ServerEnumerationStrategy.TargetRoleOptions.Any,
+            UnreachableServerAction = ServerEnumerationStrategy.UnreachableServerActionOptions.Throw
             }
         };
 
@@ -33,23 +33,20 @@ namespace RedisExtensionsTests
 
         protected IDatabase Database { get; }
 
-        public RedisFactory()
-        {
-            Serializer = new MsgPackObjectSerializer();
-            var client = CreateRedisClient();
+        public RedisFactory () {
+            Serializer = new MsgPackObjectSerializer ();
+            var client = CreateRedisClient ();
             Database = client.Db0.Database;
         }
 
-        public RedisCacheClient CreateRedisClient()
-        {
-            return new RedisCacheClient(new RedisCacheConnectionPoolManager(redisConfiguration), Serializer,
+        public RedisCacheClient CreateRedisClient () {
+            return new RedisCacheClient (new RedisCacheConnectionPoolManager (redisConfiguration), Serializer,
                 redisConfiguration);
         }
 
-        public void CleanKeys(string setKey)
-        {
-            var keys = Database.GetKeys(setKey);
-            Database.KeyDelete(keys);
+        public void CleanKeys (string setKey) {
+            var keys = Database.GetKeys (setKey);
+            Database.KeyDelete (keys);
         }
     }
 }
