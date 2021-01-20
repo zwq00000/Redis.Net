@@ -60,39 +60,39 @@ namespace Redis.Net.Generic {
 
             #endregion
 
-            #region  Increment/Decrement
+            // #region  Increment/Decrement
 
-            /// <summary>
-            /// 将存储在键上的哈希的指定字段递减，并用指定的递减量表示浮点数。如果该字段不存在，则在执行操作之前将其设置为0。
-            /// </summary>
-            /// <param name="hashField"></param>
-            /// <param name="value"></param>
-            /// <returns></returns>
-            public long Decrement (TKey hashField, long value = 1) {
-                return Database.HashDecrement (this.SetKey, RedisValue.Unbox (hashField), value);
-            }
+            // /// <summary>
+            // /// 将存储在键上的哈希的指定字段递减，并用指定的递减量表示浮点数。如果该字段不存在，则在执行操作之前将其设置为0。
+            // /// </summary>
+            // /// <param name="hashField"></param>
+            // /// <param name="value"></param>
+            // /// <returns></returns>
+            // public long Decrement (TKey hashField, long value = 1) {
+            //     return Database.HashDecrement (this.SetKey, RedisValue.Unbox (hashField), value);
+            // }
 
-            /// <summary>
-            /// 将存储在键上的哈希的指定字段递减，并用指定的递减量表示浮点数。如果该字段不存在，则在执行操作之前将其设置为0。
-            /// </summary>
-            /// <param name="hashField"></param>
-            /// <param name="value"></param>
-            /// <returns></returns>
-            public double Decrement (TKey hashField, double value) {
-                return Database.HashDecrement (this.SetKey, RedisValue.Unbox (hashField), value);
-            }
+            // /// <summary>
+            // /// 将存储在键上的哈希的指定字段递减，并用指定的递减量表示浮点数。如果该字段不存在，则在执行操作之前将其设置为0。
+            // /// </summary>
+            // /// <param name="hashField"></param>
+            // /// <param name="value"></param>
+            // /// <returns></returns>
+            // public double Decrement (TKey hashField, double value) {
+            //     return Database.HashDecrement (this.SetKey, RedisValue.Unbox (hashField), value);
+            // }
 
-            /// <summary>
-            /// 将存储在键上的哈希的指定字段递增，并用指定的增量表示浮点数。如果该字段不存在，则在执行操作之前将其设置为0。
-            /// </summary>
-            /// <param name="hashField"></param>
-            /// <param name="value"></param>
-            /// <returns></returns>
-            public double Increment (TKey hashField, double value) {
-                return Database.HashIncrement (this.SetKey, RedisValue.Unbox (hashField), value);
-            }
+            // /// <summary>
+            // /// 将存储在键上的哈希的指定字段递增，并用指定的增量表示浮点数。如果该字段不存在，则在执行操作之前将其设置为0。
+            // /// </summary>
+            // /// <param name="hashField"></param>
+            // /// <param name="value"></param>
+            // /// <returns></returns>
+            // public double Increment (TKey hashField, double value) {
+            //     return Database.HashIncrement (this.SetKey, RedisValue.Unbox (hashField), value);
+            // }
 
-            #endregion
+            // #endregion
 
             /// <summary>
             /// careate batch methods instance
