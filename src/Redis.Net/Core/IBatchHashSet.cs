@@ -65,8 +65,8 @@ namespace Redis.Net {
         Task AddAsync (params KeyValuePair<TKey, TValue>[] tuples);
         Task<bool> RemoveAsync (TKey key);
 
-        Task<long> DecrementAsync (TKey hashField, long value = 1);
-        Task<double> DecrementAsync (TKey hashField, double value);
-        Task<double> IncrementAsync (TKey hashField, double value);
+        // Task<long> DecrementAsync (TKey hashField, long value = 1);
+        // Task<double> DecrementAsync (TKey hashField, double value);
+        // Task<double> IncrementAsync (TKey hashField, double value);
     }
 }

@@ -9,7 +9,7 @@ namespace Redis.Net.Tests {
 #else
         const string RedisServerName = "localhost";
 #endif
-        protected IDatabase Database { get; }
+        public IDatabase Database { get; }
 
         public RedisFactory () {
             var client = this.Connection ();
