@@ -8,11 +8,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>$(NoWarn);1591</NoWarn>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>1.0.3</Version>
     <VersionSuffix>$(VersionSuffix)</VersionSuffix>
@@ -29,5 +24,6 @@
 
   <ItemGroup>
     <PackageReference Include="StackExchange.Redis" Version="2.1.*" />
+    <PackageReference Include="System.Text.Json" Version="4.7.*" />
   </ItemGroup>
 </Project>

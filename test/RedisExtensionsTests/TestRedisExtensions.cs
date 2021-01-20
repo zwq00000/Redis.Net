@@ -63,8 +63,9 @@ namespace RedisExtensionsTests {
             var SetKey = "TEST:Users:Batch:";
             var userSet = new RedisEntrySet<int, User> (client.Db0.Database, SetKey);
             var batch = client.Db0.Database.CreateBatch ();
+            var batchSet = userSet.AsBatch();
             foreach (var user in GetUsers (SampleCount)) {
-                await userSet.BatchAdd (batch, user.UserId, user);
+                await batchSet.BatchAdd (batch, user.UserId, user);
             }
             batch.Execute ();
 
