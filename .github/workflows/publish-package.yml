@@ -24,6 +24,6 @@ jobs:
       run: |
         subversion=`date +%Y%m%d-%H%m`
         echo $subversion
-        dotnet pack src/Redis.Net -o ../../publish/ --include-symbols -c Release -p:PackageVersion=1.0.3-ci-$subversion
+        dotnet pack src/Redis.Net -o ../../publish/ --include-symbols -c Release -p:PackageVersion=1.0.4-ci-$subversion
     - name: publish nuget
       run: dotnet nuget push ./publish/Redis.Net.*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
