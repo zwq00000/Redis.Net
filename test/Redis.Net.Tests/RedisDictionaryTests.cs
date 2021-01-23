@@ -11,7 +11,7 @@ namespace Redis.Net.Tests {
 
         public RedisDictionaryTests () {
             this._factory = new RedisFactory ();
-            this.serializer = RedisValueSerializer.Default;
+            this.serializer = DefaultSerializer.Default;
             this.dict = new RedisDictionary<string, Model> (_factory.Database, "_TEST:Model", serializer);
         }
 

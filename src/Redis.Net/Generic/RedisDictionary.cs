@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Redis.Net.Serializer;
 using StackExchange.Redis;
 
 namespace Redis.Net.Generic {
@@ -15,9 +16,12 @@ namespace Redis.Net.Generic {
         IAsyncHashSet<TKey, TValue>, IBatchHashSet<TKey, TValue>
         where TKey : IConvertible {
 
-            public RedisDictionary (IDatabase database, RedisKey setKey, ISerializer serializer) : base (database, setKey, serializer) {
+            public RedisDictionary (IDatabase database, RedisKey setKey, ISerializer serializer) 
+            : base (database, setKey, serializer.Deserialize<TValue>) {
                 this.Serializer = serializer;
             }
+
+            public RedisDictionary (IDatabase database, RedisKey setKey) : this (database, setKey, DefaultSerializer.Default) { }
 
             private ISerializer Serializer { get; }
 

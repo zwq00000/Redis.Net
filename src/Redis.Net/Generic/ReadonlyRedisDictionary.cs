@@ -31,7 +31,7 @@ namespace Redis.Net.Generic {
                 throw new ArgumentNullException (nameof (serializer));
             }
 
-            this._valueConvert = val => serializer.Deserialize<TValue> (val);
+            this._valueConvert =serializer.Deserialize<TValue>;
         }
 
         /// <summary>

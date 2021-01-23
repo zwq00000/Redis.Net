@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 using StackExchange.Redis;
 
 namespace Redis.Net.Serializer {
-    internal class NewtonsoftJsonSerializer : ISerializer {
+    public class NewtonsoftJsonSerializer : ISerializer {
 
         /// <summary>
         /// The _settings
@@ -10,12 +10,12 @@ namespace Redis.Net.Serializer {
         private readonly JsonSerializerSettings _settings;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RedisValueSerializer"/> class.
+        /// Initializes a new instance of the <see cref="DefaultSerializer"/> class.
         /// </summary>
         public NewtonsoftJsonSerializer () : this (new JsonSerializerSettings ()) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RedisValueSerializer"/> class.
+        /// Initializes a new instance of the <see cref="DefaultSerializer"/> class.
         /// </summary>
         /// <param name="settings">The settings.</param>
         public NewtonsoftJsonSerializer (JsonSerializerSettings settings) {

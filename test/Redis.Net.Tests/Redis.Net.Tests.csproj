@@ -17,6 +17,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Redis.Net\Redis.Net.csproj" />
+    <ProjectReference Include="..\..\src\Redis.Net.Serializer.NewtonsoftJson\Redis.Net.Serializer.NewtonsoftJson.csproj" />
+    <ProjectReference Include="..\..\src\Redis.Net.Serializer.MsgPack\Redis.Net.Serializer.MsgPack.csproj" />
   </ItemGroup>
 
 </Project>

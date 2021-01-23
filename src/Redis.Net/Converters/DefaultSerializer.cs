@@ -2,9 +2,12 @@ using System.Text.Json;
 using StackExchange.Redis;
 
 namespace Redis.Net.Serializer {
-    public class RedisValueSerializer : ISerializer {
+    /// <summary>
+    /// 默认序列化/反序列化工具, 使用 <see cref="JsonSerializer" />作为序列化方法
+    /// </summary>
+    public class DefaultSerializer : ISerializer {
 
-        internal static ISerializer Default = new RedisValueSerializer();
+        internal static ISerializer Default = new DefaultSerializer();
 
         /// <summary>
         /// The _settings
@@ -12,15 +15,15 @@ namespace Redis.Net.Serializer {
         private readonly JsonSerializerOptions _options;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RedisValueSerializer"/> class.
+        /// Initializes a new instance of the <see cref="DefaultSerializer"/> class.
         /// </summary>
-        public RedisValueSerializer () : this (new JsonSerializerOptions ()) { }
+        public DefaultSerializer () : this (new JsonSerializerOptions ()) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RedisValueSerializer"/> class.
+        /// Initializes a new instance of the <see cref="DefaultSerializer"/> class.
         /// </summary>
         /// <param name="options">The settings.</param>
-        public RedisValueSerializer (JsonSerializerOptions options) {
+        public DefaultSerializer (JsonSerializerOptions options) {
             _options = options;
         }
 
