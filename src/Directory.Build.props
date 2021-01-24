@@ -1,5 +1,18 @@
 <Project>
     <PropertyGroup>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Version>1.0.4</Version>
+        <VersionSuffix>$(VersionSuffix)</VersionSuffix>
+        <Authors>zwq00000@hotmail.com</Authors>
+        <Company>XiGe Digi Tech CO.</Company>
+        <Description>Redis Collections Warpper for .NetCore</Description>
+        <PackageProjectUrl>https://github.com/zwq00000/Redis.Net</PackageProjectUrl>
+        <PackageTags>Redis;.NetCore</PackageTags>
+        <RepositoryUrl>https://github.com/zwq00000/Redis.Net.git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    </PropertyGroup>
+    <PropertyGroup>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <NoWarn>$(NoWarn);1591</NoWarn>
     </PropertyGroup>
