@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using StackExchange.Redis;
 
-namespace Redis.Net.Generic {
+namespace Redis.Net.Generic
+{
     /// <summary>
     /// Redis Set 集合
     /// </summary>
@@ -116,4 +117,5 @@ namespace Redis.Net.Generic {
             return this;
         }
     }
+
 }

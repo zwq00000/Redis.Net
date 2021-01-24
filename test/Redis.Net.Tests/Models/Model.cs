@@ -1,6 +1,7 @@
 using System;
 
-namespace Redis.Net.Tests {
+namespace Redis.Net.Tests
+{
 
     public class Model {
         public string Str { get; set; }
@@ -30,22 +31,23 @@ namespace Redis.Net.Tests {
         public UriKind Kind { get; set; }
 
         public static Model CreateNew () {
+            var random = new Random();
             return new Model () {
                 Str = "TEST",
                     bytes = new byte[] { 1, 2, 3 },
                     Date = DateTime.Now,
-                    DateNullable = DateTime.Now,
-                    IntNullable = 1,
-                    UintNullable = 1,
-                    DoubleNullable = 1,
+                    DateNullable = null,
+                    IntNullable = random.Next(),
+                    UintNullable = (uint)random.Next(),
+                    DoubleNullable = random.NextDouble(),
                     BoolNullable = true,
-                    LongNullable = 1,
-                    UlongNullable = 1,
-                    FloatNullable = 1f,
+                    LongNullable = random.Next(),
+                    UlongNullable = (ulong)random.Next(),
+                    FloatNullable = random.Next(),
                     Kind = UriKind.Relative,
-                    FloatArray = new float[] { 1f, 2f, 3f, 4f, 5, 6, 7 },
-                    DoubleArray = new double[] { 3.1d, 4.2d, 5.3d },
-                    IntArray = new int[] { 5, 6, 7, 8 },
+                    FloatArray = new float[] { (float)random.NextDouble(), (float)random.NextDouble(),(float)random.NextDouble(), (float)random.NextDouble() },
+                    DoubleArray = new double[] { random.NextDouble(),random.NextDouble(),random.NextDouble(),random.NextDouble() },
+                    IntArray = new int[] { random.Next(),random.Next(), random.Next(), random.Next() },
                     LongArray = new long[] { 9L, 10L, 11L, 12L, 13, 14 }
             };
         }

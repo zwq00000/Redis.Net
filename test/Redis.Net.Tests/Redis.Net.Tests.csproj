@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MsgPack.Cli" Version="1.0.1" />
     <PackageReference Include="System.Text.Json" Version="4.7.*" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
     <PackageReference Include="xunit" Version="2.4.0" />
@@ -16,6 +17,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Redis.Net\Redis.Net.csproj" />
+    <ProjectReference Include="..\..\src\Redis.Net.Serializer.NewtonsoftJson\Redis.Net.Serializer.NewtonsoftJson.csproj" />
+    <ProjectReference Include="..\..\src\Redis.Net.Serializer.MsgPack\Redis.Net.Serializer.MsgPack.csproj" />
   </ItemGroup>
 
 </Project>
