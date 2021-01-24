@@ -65,7 +65,6 @@ namespace Redis.Net.Tests {
     /// 区域
     /// </summary>
     public class Bounds {
-
         public Bounds (double left, double bottom, double right, double top) {
             Left = left;
             Bottom = bottom;
