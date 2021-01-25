@@ -6,15 +6,15 @@ using StackExchange.Redis;
 using Xunit;
 
 namespace Redis.Net.Tests {
-    public class ReadonlyRedisDictionaryTests {
+    public class ReadOnlyRedisDictionaryTests {
         private readonly RedisFactory _factory;
         private readonly ISerializer serializer;
-        private readonly ReadonlyRedisDictionary<string, ShipName> dict;
+        private readonly ReadOnlyRedisDictionary<string, ShipName> dict;
 
-        public ReadonlyRedisDictionaryTests () {
+        public ReadOnlyRedisDictionaryTests () {
             this._factory = new RedisFactory ();
             this.serializer = new NewtonsoftJsonSerializer ();
-            this.dict = new ReadonlyRedisDictionary<string, ShipName> (_factory.Database, "ShipInfo:ShipNames", serializer);
+            this.dict = new ReadOnlyRedisDictionary<string, ShipName> (_factory.Database, "ShipInfo:ShipNames", serializer);
         }
 
         [Fact]

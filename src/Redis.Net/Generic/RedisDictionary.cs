@@ -12,7 +12,7 @@ namespace Redis.Net.Generic {
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TValue"></typeparam>
-    public class RedisDictionary<TKey, TValue> : ReadonlyRedisDictionary<TKey, TValue>, IHashSet<TKey, TValue>,
+    public class RedisDictionary<TKey, TValue> : ReadOnlyRedisDictionary<TKey, TValue>, IHashSet<TKey, TValue>,
         IAsyncHashSet<TKey, TValue>, IBatchHashSet<TKey, TValue>
         where TKey : IConvertible {
 
@@ -29,12 +29,12 @@ namespace Redis.Net.Generic {
             /// careate batch methods instance
             /// </summary>
             /// <returns></returns>
-            public IBatchEntrySet<TKey, TValue> AsBatch () {
-                return (IBatchEntrySet<TKey, TValue>) this;
+            public IBatchHashSet<TKey, TValue> AsBatch () {
+                return (IBatchHashSet<TKey, TValue>) this;
             }
 
-            public IAsyncEntrySet<TKey, TValue> AsAsync () {
-                return (IAsyncEntrySet<TKey, TValue>) this;
+            public IAsyncHashSet<TKey, TValue> AsAsync () {
+                return (IAsyncHashSet<TKey, TValue>) this;
             }
 
             public void Add (TKey key, TValue value) {

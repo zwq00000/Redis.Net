@@ -12,9 +12,9 @@ namespace Redis.Net.Generic {
     /// </summary>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TValue"></typeparam>
-    public class ReadonlyRedisDictionary<TKey, TValue> : AbstracRedisKey, IReadOnlyDictionary<TKey, TValue>, IEnumerable
+    public class ReadOnlyRedisDictionary<TKey, TValue> : AbstracRedisKey, IReadOnlyDictionary<TKey, TValue>, IEnumerable
     where TKey : IConvertible {
-        public ReadonlyRedisDictionary (IDatabase database, RedisKey setKey) : base (database, setKey) { }
+        public ReadOnlyRedisDictionary (IDatabase database, RedisKey setKey) : base (database, setKey) { }
 
         private static readonly Type KeyType = typeof (TKey);
         private static readonly Type ValueType = typeof (TValue);
@@ -26,7 +26,7 @@ namespace Redis.Net.Generic {
         /// <param name="database">Redis Database</param>
         /// <param name="setKey">Redis Key Name</param>
         /// <param name="serializer">Value Converter</param>
-        public ReadonlyRedisDictionary (IDatabase database, string setKey, ISerializer serializer) : base (database, setKey, RedisType.Hash) {
+        public ReadOnlyRedisDictionary (IDatabase database, string setKey, ISerializer serializer) : base (database, setKey, RedisType.Hash) {
             if (serializer == null) {
                 throw new ArgumentNullException (nameof (serializer));
             }
@@ -40,7 +40,7 @@ namespace Redis.Net.Generic {
         /// <param name="database">Redis Database</param>
         /// <param name="setKey">Redis Key Name</param>
         /// <param name="valueConvert">Value Converter</param>
-        public ReadonlyRedisDictionary (IDatabase database, string setKey, Func<RedisValue, TValue> valueConvert) : base (database, setKey, RedisType.Hash) {
+        public ReadOnlyRedisDictionary (IDatabase database, string setKey, Func<RedisValue, TValue> valueConvert) : base (database, setKey, RedisType.Hash) {
             if (valueConvert == null) {
                 throw new ArgumentNullException (nameof (valueConvert));
             }

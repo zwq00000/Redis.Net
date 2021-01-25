@@ -28,10 +28,35 @@ namespace Redis.Net.Tests {
         public void TestRemove () {
             var instance = Model.CreateNew ();
             var key = "TestRemove";
-            dict.Add(key,instance);
+            dict.Add (key, instance);
             Assert.True (dict.ContainsKey (key));
             Assert.True (dict.Remove (key));
             Assert.False (dict.ContainsKey (key));
+        }
+
+        [Fact]
+        public void TestAsBanch () {
+            var batch = dict.AsBatch ();
+            Assert.NotNull (batch);
+            Assert.Same (dict, batch);
+
+             var key = "TestAsBatch";
+             var b = _factory.Database.CreateBatch();
+            batch.BatchAdd(b, key,Model.CreateNew());
+            b.Execute();
+            Assert.True(dict.ContainsKey(key));
+            dict.Remove(key);
+        }
+
+        [Fact]
+        public async System.Threading.Tasks.Task TestAsAsync () {
+            var asy = dict.AsAsync ();
+            Assert.NotNull (asy);
+            Assert.Same (dict, asy);
+            var key = "TestAsAsync";
+            await asy.AddAsync(key,Model.CreateNew());
+            Assert.True(dict.ContainsKey(key));
+            dict.Remove(key);
         }
     }
 }
