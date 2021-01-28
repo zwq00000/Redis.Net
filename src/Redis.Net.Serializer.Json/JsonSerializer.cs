@@ -12,7 +12,11 @@ namespace Redis.Net.Serializer {
         /// <summary>
         /// Initializes a new instance of the <see cref="JsonSerializer"/> class.
         /// </summary>
-        public JsonSerializer () : this (new JsonSerializerOptions ()) { }
+        public JsonSerializer () : this (new JsonSerializerOptions () {
+            PropertyNameCaseInsensitive = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                IgnoreNullValues = true,
+        }) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="JsonSerializer"/> class.
