@@ -1,7 +1,7 @@
 <Project>
     <PropertyGroup>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Version>1.0.4</Version>
+        <Version>1.0.5</Version>
         <VersionSuffix>$(VersionSuffix)</VersionSuffix>
         <Authors>zwq00000@hotmail.com</Authors>
         <Company>XiGe Digi Tech CO.</Company>
