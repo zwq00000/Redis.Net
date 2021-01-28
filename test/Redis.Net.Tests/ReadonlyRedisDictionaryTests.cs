@@ -13,20 +13,17 @@ namespace Redis.Net.Tests {
 
         public ReadOnlyRedisDictionaryTests () {
             this._factory = new RedisFactory ();
-            this.serializer = new NewtonsoftJsonSerializer ();
+            this.serializer = DefaultSerializer.Default; //new NewtonsoftJsonSerializer ();
             this.dict = new ReadOnlyRedisDictionary<string, ShipName> (_factory.Database, "ShipInfo:ShipNames", serializer);
         }
 
         [Fact]
         public void TestGetValues () {
-            var values = dict.GetValues ("373300000", "412272280");
-            Assert.NotEmpty (values);
+            var keys = dict.Keys.Take (10).ToArray ();
+            Assert.NotEmpty (keys);
+            var values = dict.GetValues (keys);
             Assert.IsType<ShipName> (values.First ());
-            Assert.Equal (2, values.Count ());
-
-            values = dict.GetValues ("373300000", "412272280", "NotFoundKey");
-            Assert.Equal (3, values.Count ());
-            Assert.Null (values.Last ());
+            Assert.Equal (10, values.Count ());
         }
 
         [Fact]

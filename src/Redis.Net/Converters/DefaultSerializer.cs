@@ -7,7 +7,7 @@ namespace Redis.Net.Serializer {
     /// </summary>
     public class DefaultSerializer : ISerializer {
 
-        internal static ISerializer Default = new DefaultSerializer();
+        internal static ISerializer Default = new DefaultSerializer ();
 
         /// <summary>
         /// The _settings
@@ -17,7 +17,11 @@ namespace Redis.Net.Serializer {
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultSerializer"/> class.
         /// </summary>
-        public DefaultSerializer () : this (new JsonSerializerOptions ()) { }
+        public DefaultSerializer () : this (new JsonSerializerOptions () {
+            PropertyNameCaseInsensitive = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                IgnoreNullValues = true,
+        }) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultSerializer"/> class.
