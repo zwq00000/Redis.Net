@@ -80,7 +80,7 @@ namespace Redis.Net.Tests {
         // [InlineData(new string[]{"a","B","123456"})]
         public void TestArrayConvert (Array array) {
             var val = RedisConvertFactory.ArrayConverter.ToRedisValue (array);
-            Assert.NotNull (val);
+            Assert.True (val.HasValue);
             Assert.False (val.IsNull);
 
             var converted = (Array) RedisConvertFactory.ArrayConverter.ToArray (val, array.GetType ());

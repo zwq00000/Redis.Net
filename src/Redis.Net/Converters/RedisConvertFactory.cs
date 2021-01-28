@@ -5,7 +5,7 @@ namespace Redis.Net.Converters {
     /// <summary>
     /// Redis 数值转换工厂,用于 Redis HashSet 类型转换
     /// </summary>
-    public static class RedisConvertFactory {
+    internal static class RedisConvertFactory {
         static IRedisValueConverter _converter = new RedisValueConverter();
         static IArrayConverter _arrayConverter = new ArrayConverter();
 
