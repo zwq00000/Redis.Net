@@ -30,4 +30,9 @@ jobs:
         dotnet pack src/Redis.Net.Serializer.Json -o ../../publish/ --include-symbols -c Release -p:PackageVersion=1.0.5-ci-$subversion
         
     - name: publish nuget
-      run: dotnet nuget push /home/runner/work/publish/Redis.Net.*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
+      run: |
+        dotnet nuget push /home/runner/work/publish/Redis.Net.*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
+        dotnet nuget push /home/runner/work/publish/Redis.Net.Serializer.NewtonsoftJson.*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
+        dotnet nuget push /home/runner/work/publish/Redis.Net.Serializer.MsgPack.*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
+        dotnet nuget push /home/runner/work/publish/Redis.Net.Serializer.Json.*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
+      run: dotnet nuget push /home/runner/work/publish/Redis.Net.Serializer.MsgPack.*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
