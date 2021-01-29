@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Redis.Net</RootNamespace>
     <SharedFrameworkVersion>2.2.0</SharedFrameworkVersion>
-     <LangVersion>7.1</LangVersion>
+     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   
   <ItemGroup>

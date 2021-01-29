@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using StackExchange.Redis;
 
@@ -25,9 +26,9 @@ namespace Redis.Net.Converters {
                 case DateTime v:
                     //符合 ISO8601
                     return v.ToString ("O");
-                case Enum _:
-                    var underlying = obj.ToType (Enum.GetUnderlyingType (typeof (TVal)), CultureInfo.InvariantCulture);
-                    return RedisValue.Unbox (underlying);
+                case Enum v:
+                     var underlyingType = Enum.GetUnderlyingType (v.GetType());
+                    return RedisValue.Unbox (System.Convert.ChangeType (v, underlyingType));
                 default:
                     return RedisValue.Unbox (obj);
             }
@@ -47,5 +48,27 @@ namespace Redis.Net.Converters {
         public static void SetArrayConvert (IArrayConverter arrayConvert) {
             _arrayConverter = arrayConvert;
         }
+
+        // static class EnumValueConvert<TValue> where TValue : IConvertible {
+
+        //     private static Func<TValue, RedisValue> conv;
+        //     public static Func<TValue, RedisValue> GetConvert () {
+        //         if (conv == null) {
+        //             var underlyingType = Enum.GetUnderlyingType (typeof (TValue));
+        //             conv = new Func<TValue, RedisValue> (e => RedisValue.Unbox (System.Convert.ChangeType (e, underlyingType)));
+        //         }
+        //         return conv;
+        //     }
+
+        //     private static Func<TValue, RedisValue> CreateConvert () {
+        //         switch(TValue){
+
+        //         }
+        //     }
+
+        //     public static RedisValue Unbox(TValue e){
+        //         return GetConvert()(e);
+        //     }
+        // }
     }
 }

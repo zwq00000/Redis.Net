@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Redis.Net.Generic;
 using Xunit;
 
@@ -20,7 +21,7 @@ namespace Redis.Net.Tests {
             }
             Assert.NotEmpty (hashSet.Values);
 
-            Assert.IsType<DayOfWeek> (hashSet.Values);
+            Assert.IsType<DayOfWeek> (hashSet.Values.First());
         }
 
         [Fact]
