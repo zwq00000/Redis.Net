@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Redis.Net.Converters;
 using StackExchange.Redis;
 
 namespace Redis.Net.Generic {
@@ -14,7 +16,16 @@ namespace Redis.Net.Generic {
         IAsyncHashSet<TKey, TValue>, IBatchHashSet<TKey, TValue>
         where TKey : IConvertible where TValue : IConvertible {
 
-            public RedisHashSet (IDatabase database, RedisKey setKey) : base (database, setKey) { }
+            public RedisHashSet (IDatabase database, RedisKey setKey) : base (database, setKey) {
+                if (typeof (TValue).IsEnum) {
+
+                }
+            }
+
+            [MethodImpl (MethodImplOptions.AggressiveInlining)]
+            private RedisValue Unbox<T> (T value) where T : IConvertible {
+                return RedisConvertFactory.ToRedisValue<T> (value);
+            }
 
             #region Implementation of IRedisHash<TKey,TValue>
 
@@ -22,7 +33,7 @@ namespace Redis.Net.Generic {
             /// Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1"></see>.
             /// </summary>
             public void Add (TKey key, TValue value) {
-                Database.HashSet (SetKey, RedisValue.Unbox (key), RedisValue.Unbox (value));
+                Database.HashSet (SetKey, Unbox (key), Unbox (value));
             }
 
             /// <summary>
@@ -32,7 +43,7 @@ namespace Redis.Net.Generic {
                 if (tuples == null || tuples.Length == 0) {
                     return;
                 }
-                var entities = tuples.Select (t => new HashEntry (RedisValue.Unbox (t.Item1), RedisValue.Unbox ((t.Item2))))
+                var entities = tuples.Select (t => new HashEntry (Unbox (t.Item1), Unbox ((t.Item2))))
                     .ToArray ();
                 Database.HashSet (SetKey, entities);
             }
@@ -44,7 +55,7 @@ namespace Redis.Net.Generic {
                 if (pairs == null || pairs.Length == 0) {
                     return;
                 }
-                var entities = pairs.Select (t => new HashEntry (RedisValue.Unbox (t.Key), RedisValue.Unbox ((t.Value))))
+                var entities = pairs.Select (t => new HashEntry (Unbox (t.Key), Unbox ((t.Value))))
                     .ToArray ();
                 Database.HashSet (SetKey, entities);
             }
@@ -55,7 +66,7 @@ namespace Redis.Net.Generic {
             /// <param name="key"></param>
             /// <returns></returns>
             public bool Remove (TKey key) {
-                return Database.HashDelete (SetKey, RedisValue.Unbox (key));
+                return Database.HashDelete (SetKey, Unbox (key));
             }
 
             #endregion
@@ -69,7 +80,7 @@ namespace Redis.Net.Generic {
             // /// <param name="value"></param>
             // /// <returns></returns>
             // public long Decrement (TKey hashField, long value = 1) {
-            //     return Database.HashDecrement (this.SetKey, RedisValue.Unbox (hashField), value);
+            //     return Database.HashDecrement (this.SetKey, ToRedisValue (hashField), value);
             // }
 
             // /// <summary>
@@ -79,7 +90,7 @@ namespace Redis.Net.Generic {
             // /// <param name="value"></param>
             // /// <returns></returns>
             // public double Decrement (TKey hashField, double value) {
-            //     return Database.HashDecrement (this.SetKey, RedisValue.Unbox (hashField), value);
+            //     return Database.HashDecrement (this.SetKey, ToRedisValue (hashField), value);
             // }
 
             // /// <summary>
@@ -89,7 +100,7 @@ namespace Redis.Net.Generic {
             // /// <param name="value"></param>
             // /// <returns></returns>
             // public double Increment (TKey hashField, double value) {
-            //     return Database.HashIncrement (this.SetKey, RedisValue.Unbox (hashField), value);
+            //     return Database.HashIncrement (this.SetKey, ToRedisValue (hashField), value);
             // }
 
             // #endregion
@@ -106,7 +117,7 @@ namespace Redis.Net.Generic {
                 return this;
             }
 
-            public ReadOnlyRedisHashSet<TKey, TValue> AsReadonly(){
+            public ReadOnlyRedisHashSet<TKey, TValue> AsReadonly () {
                 return this;
             }
         }

@@ -10,11 +10,11 @@ namespace Redis.Net.Generic {
     public partial class RedisSortedSet<TValue> {
         #region  Batch
         Task<bool> IBatchSortSet<TValue>.BatchAdd (IBatch batch, TValue member, double score) {
-            return batch.SortedSetAddAsync (this.SetKey, RedisValue.Unbox (member), score);
+            return batch.SortedSetAddAsync (this.SetKey, Unbox (member), score);
         }
 
         Task<long> IBatchSortSet<TValue>.BatchAdd (IBatch batch, params KeyValuePair<TValue, double>[] values) {
-            return batch.SortedSetAddAsync (this.SetKey, values.Select (kv => new SortedSetEntry (RedisValue.Unbox (kv.Key), kv.Value)).ToArray ());
+            return batch.SortedSetAddAsync (this.SetKey, values.Select (kv => new SortedSetEntry (Unbox (kv.Key), kv.Value)).ToArray ());
         }
 
         Task<long> IBatchSortSet<TValue>.BatchAdd (IBatch batch, params SortedSetEntry<TValue>[] values) {
@@ -22,7 +22,7 @@ namespace Redis.Net.Generic {
         }
 
         Task<long> IBatchSortSet<TValue>.BatchRemove (IBatch batch, params TValue[] members) {
-            return batch.SortedSetRemoveAsync (this.SetKey, members.Select (m => RedisValue.Unbox (m)).ToArray ());
+            return batch.SortedSetRemoveAsync (this.SetKey, members.Select (m => Unbox (m)).ToArray ());
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace Redis.Net.Generic {
         /// <param name="value"></param>
         /// <returns></returns>
         Task<double> IBatchSortSet<TValue>.BatchIncrement (IBatch batch, TValue member, double value) {
-            return batch.SortedSetIncrementAsync (this.SetKey, RedisValue.Unbox (member), value);
+            return batch.SortedSetIncrementAsync (this.SetKey, Unbox (member), value);
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Redis.Net.Generic {
         /// <param name="value"></param>
         /// <returns></returns>
         Task<double> IBatchSortSet<TValue>.BatchDecrement (IBatch batch, TValue member, double value) {
-            return batch.SortedSetDecrementAsync (this.SetKey, RedisValue.Unbox (member), value);
+            return batch.SortedSetDecrementAsync (this.SetKey, Unbox (member), value);
         }
 
         #endregion

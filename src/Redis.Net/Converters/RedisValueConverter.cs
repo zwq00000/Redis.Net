@@ -11,12 +11,10 @@ namespace Redis.Net.Converters {
         /// <param name="value"></param>
         /// <returns></returns>
         public bool TryParse (object obj, out RedisValue value) {
-            if (obj == null) {
-                value = RedisValue.Null;
-                return false;
-            }
-
             switch (obj) {
+                case null:
+                    value = RedisValue.Null;
+                    break;
                 case string v:
                     value = v;
                     break;
@@ -61,17 +59,17 @@ namespace Redis.Net.Converters {
                     value = time.Ticks;
                     break;
                 case Enum enumVal:
-                    value = (int) obj;
+                    value =  (int) obj;
                     break;
                 case Array array:
                     value = RedisConvertFactory.ArrayConverter.ToRedisValue (array);
                     break;
                 default:
                     value = RedisValue.Null;
-                    break;
+                    return false;
             }
 
-            return value != RedisValue.Null;
+            return true;
         }
 
         public object Convert (RedisValue value, Type conversionType, IFormatProvider provider) {

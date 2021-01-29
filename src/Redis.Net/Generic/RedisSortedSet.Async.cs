@@ -17,7 +17,7 @@ namespace Redis.Net.Generic {
         /// <param name="score"></param>
         /// <returns></returns>
         async Task<bool> IAsyncSortSet<TValue>.AddAsync (TValue member, double score) {
-            return await Database.SortedSetAddAsync (this.SetKey, RedisValue.Unbox (member), score);
+            return await Database.SortedSetAddAsync (this.SetKey, Unbox (member), score);
         }
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace Redis.Net.Generic {
         /// <param name="values"></param>
         /// <returns></returns>
         async Task<long> IAsyncSortSet<TValue>.AddAsync (params KeyValuePair<TValue, double>[] values) {
-            return await Database.SortedSetAddAsync (this.SetKey, values.Select (kv => new SortedSetEntry (RedisValue.Unbox (kv.Key), kv.Value)).ToArray ());
+            return await Database.SortedSetAddAsync (this.SetKey, values.Select (kv => new SortedSetEntry (Unbox (kv.Key), kv.Value)).ToArray ());
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace Redis.Net.Generic {
         /// <param name="members"></param>
         /// <returns></returns>
         async Task<long> IAsyncSortSet<TValue>.RemoveAsync (params TValue[] members) {
-            return await Database.SortedSetRemoveAsync (this.SetKey, members.Select (m => RedisValue.Unbox (m)).ToArray ());
+            return await Database.SortedSetRemoveAsync (this.SetKey, members.Select (m => Unbox (m)).ToArray ());
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace Redis.Net.Generic {
         /// <param name="value"></param>
         /// <returns></returns>
         Task<double> IAsyncSortSet<TValue>.IncrementAsync (TValue member, double value) {
-            return Database.SortedSetIncrementAsync (this.SetKey, RedisValue.Unbox (member), value);
+            return Database.SortedSetIncrementAsync (this.SetKey, Unbox (member), value);
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Redis.Net.Generic {
         /// <param name="value"></param>
         /// <returns></returns>
         Task<double> IAsyncSortSet<TValue>.DecrementAsync (TValue member, double value) {
-            return Database.SortedSetDecrementAsync (this.SetKey, RedisValue.Unbox (member), value);
+            return Database.SortedSetDecrementAsync (this.SetKey, Unbox (member), value);
         }
 
         #endregion
