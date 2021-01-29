@@ -47,7 +47,7 @@ namespace Redis.Net {
         /// <param name="member2"></param>
         /// <param name="unit"></param>
         /// <returns></returns>
-        public double? Distance (RedisValue member1, RedisValue member2, GeoUnit unit = GeoUnit.Meters) {
+        public double? GetDistance (RedisValue member1, RedisValue member2, GeoUnit unit = GeoUnit.Meters) {
             return Database.GeoDistance (SetKey, member1, member2, unit);
         }
 
@@ -58,7 +58,7 @@ namespace Redis.Net {
         /// <param name="member2"></param>
         /// <param name="unit"></param>
         /// <returns></returns>
-        public async Task<double?> DistanceAsync (RedisValue member1, RedisValue member2, GeoUnit unit = GeoUnit.Meters) {
+        public async Task<double?> GetDistanceAsync (RedisValue member1, RedisValue member2, GeoUnit unit = GeoUnit.Meters) {
             return await Database.GeoDistanceAsync (SetKey, member1, member2, unit);
         }
 
@@ -72,7 +72,7 @@ namespace Redis.Net {
         /// <param name="order"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        public GeoRadiusResult[] GetRedius (RedisValue member, double radius, GeoUnit unit = GeoUnit.Meters, int count = -1, Order? order = Order.Ascending, GeoRadiusOptions options = GeoRadiusOptions.Default) {
+        public GeoRadiusResult[] GetByRedius (RedisValue member, double radius, GeoUnit unit = GeoUnit.Meters, int count = -1, Order? order = Order.Ascending, GeoRadiusOptions options = GeoRadiusOptions.Default) {
             return Database.GeoRadius (SetKey, member, radius, unit, count, order, options);
         }
 
@@ -88,7 +88,7 @@ namespace Redis.Net {
         /// <param name="count"></param>
         /// <param name="order"></param>
         /// <param name="options"></param>
-        public GeoRadiusResult[] GetRedius (double longitude, double latitude, double radius, GeoUnit unit = GeoUnit.Meters, int count = -1, Order? order = Order.Ascending, GeoRadiusOptions options = GeoRadiusOptions.Default) {
+        public GeoRadiusResult[] GetByRedius (double longitude, double latitude, double radius, GeoUnit unit = GeoUnit.Meters, int count = -1, Order? order = Order.Ascending, GeoRadiusOptions options = GeoRadiusOptions.Default) {
             return Database.GeoRadius (SetKey, longitude, latitude, radius, unit, count, order, options);
         }
 
@@ -99,11 +99,11 @@ namespace Redis.Net {
         /// <param name="radius"></param>
         /// <param name="unit"></param>
         /// <returns></returns>
-        public async Task<GeoRadiusResult[]> GetRediusAsync (RedisValue member, double radius, GeoUnit unit = GeoUnit.Meters) {
+        public async Task<GeoRadiusResult[]> GetByRediusAsync (RedisValue member, double radius, GeoUnit unit = GeoUnit.Meters) {
             return await Database.GeoRadiusAsync (SetKey, member, radius, unit);
         }
 
-        public async Task<GeoRadiusResult[]> GetRediusAsync (double longitude, double latitude, double radius, GeoUnit unit = GeoUnit.Meters, int count = -1, Order? order = Order.Ascending, GeoRadiusOptions options = GeoRadiusOptions.Default) {
+        public async Task<GeoRadiusResult[]> GetByRediusAsync (double longitude, double latitude, double radius, GeoUnit unit = GeoUnit.Meters, int count = -1, Order? order = Order.Ascending, GeoRadiusOptions options = GeoRadiusOptions.Default) {
             return await Database.GeoRadiusAsync (SetKey, longitude, latitude, radius, unit, count, order, options);
         }
     }
