@@ -16,16 +16,16 @@ namespace Redis.Net {
         /// 获取集合全部键值
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<string> Keys () {
-            return GetRangeByRank ().ToStringArray ();
+        public RedisValue[] Keys () {
+            return GetRangeByRank ();
         }
 
         /// <summary>
         /// 异步获取集合全部键值
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<string>> KeysAsync () {
-            return (await GetRangeByRankAsync ()).ToStringArray ();
+        public async Task<RedisValue[]> KeysAsync () {
+            return await GetRangeByRankAsync ();
         }
 
         ///<summary>
