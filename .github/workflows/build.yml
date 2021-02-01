@@ -13,18 +13,40 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 2.2.108
+        dotnet-version: ${{ matrix.dotnet }}
     - name: Build with dotnet
       run: dotnet build --configuration Release
   
-  test:
+#   test:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@master
+#       - uses: shogo82148/actions-setup-redis@v1
+#         with:
+#           redis-version: '5.x'
+#       - uses: actions/setup-dotnet@v1
+#         with:
+#           dotnet-version: ${{ matrix.dotnet }}
+#       - run: dotnet test -c Release
+#       - name: Build with dotnet
+#         run: dotnet build --configuration Release
+  package:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - uses: shogo82148/actions-setup-redis@v1
+      - uses: actions/checkout@v1
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
         with:
-          redis-version: '5.x'
-      - uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 2.2.108
-      - run: dotnet test -c Release
+          dotnet-version: ${{ matrix.dotnet }}
+      - name: Package
+        run: |
+          dotnet pack src/Redis.Net -o ../../publish/ --include-symbols -c Release 
+          dotnet pack src/Redis.Net.Serializer.NewtonsoftJson -o ../../publish/ --include-symbols -c Release
+          dotnet pack src/Redis.Net.Serializer.MsgPack -o ../../publish/ --include-symbols -c Release
+          dotnet pack src/Redis.Net.Serializer.Json -o ../../publish/ --include-symbols -c Release
+      - name: publish nuget
+        run: |
+          dotnet nuget push /home/runner/work/publish/Redis.Net.*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
+          dotnet nuget push /home/runner/work/publish/Redis.Net.Serializer.NewtonsoftJson.*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
+          dotnet nuget push /home/runner/work/publish/Redis.Net.Serializer.MsgPack.*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
+          dotnet nuget push /home/runner/work/publish/Redis.Net.Serializer.Json.*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
