@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using Redis.Net.Converters;
 using StackExchange.Redis;
 
 namespace Redis.Net.Generic {
@@ -20,11 +17,6 @@ namespace Redis.Net.Generic {
                 if (typeof (TValue).IsEnum) {
 
                 }
-            }
-
-            [MethodImpl (MethodImplOptions.AggressiveInlining)]
-            private RedisValue Unbox<T> (T value) where T : IConvertible {
-                return RedisConvertFactory.ToRedisValue<T> (value);
             }
 
             #region Implementation of IRedisHash<TKey,TValue>

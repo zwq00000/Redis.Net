@@ -10,9 +10,7 @@ namespace Redis.Net.Tests {
         public void TestToRedisValue () {
             Assert.Equal (RedisValue.Null, RedisConvertFactory.ToRedisValue<string> (null));
             Assert.Equal (RedisValue.Null, RedisValue.Unbox (null));
-
             Assert.Equal (5, RedisConvertFactory.ToRedisValue<DayOfWeek> (DayOfWeek.Friday));
-
         }
 
         [Fact]
