@@ -35,4 +35,3 @@ jobs:
         dotnet nuget push /home/runner/work/publish/Redis.Net.Serializer.NewtonsoftJson.*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
         dotnet nuget push /home/runner/work/publish/Redis.Net.Serializer.MsgPack.*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
         dotnet nuget push /home/runner/work/publish/Redis.Net.Serializer.Json.*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
-        dotnet nuget push /home/runner/work/publish/Redis.Net.Serializer.MsgPack.*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
