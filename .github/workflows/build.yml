@@ -38,6 +38,8 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: ${{ matrix.dotnet }}
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
       - name: Package
         run: |
           dotnet pack src/Redis.Net -o ../../publish/ --include-symbols -c Release 
