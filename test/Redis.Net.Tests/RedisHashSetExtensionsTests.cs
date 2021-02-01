@@ -1,12 +1,11 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using StackExchange.Redis;
+using Redis.Net.Converters;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Redis.Net.Tests
-{
+namespace Redis.Net.Tests {
     public partial class RedisHashSetExtensionsTests {
         private readonly ITestOutputHelper _output;
 
@@ -73,6 +72,21 @@ namespace Redis.Net.Tests
             _output.WriteLine (redisValue.ToString ());
             var date = ((IConvertible) redisValue).ToType (typeof (DateTime), CultureInfo.InvariantCulture);
             Assert.Equal (value, date);
+        }
+
+        [Theory]
+        [InlineData (new float[] { 1, 2, 3, 4 })]
+        [InlineData (new int[] { 1, 2, 3, 4 })]
+        // [InlineData(new string[]{"a","B","123456"})]
+        public void TestArrayConvert (Array array) {
+            var val = RedisConvertFactory.ArrayConverter.ToRedisValue (array);
+            Assert.True (val.HasValue);
+            Assert.False (val.IsNull);
+
+            var converted = (Array) RedisConvertFactory.ArrayConverter.ToArray (val, array.GetType ());
+            Assert.NotNull (converted);
+            Assert.Equal (array.Length, converted.Length);
+            Assert.Equal (array, converted);
         }
     }
 }

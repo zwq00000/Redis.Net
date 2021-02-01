@@ -64,7 +64,7 @@ namespace Redis.Net {
         /// </summary>
         /// <param name="entry">The geo value to store.</param>
         /// <returns></returns>
-        async Task<bool> IAsyncGeoHashSet.AddAsync (GeoEntry entry) {
+        async Task<bool> IAsyncGeoHashSet<RedisValue>.AddAsync (GeoEntry entry) {
             return await Database.GeoAddAsync (SetKey, entry);
         }
 
@@ -73,11 +73,11 @@ namespace Redis.Net {
         /// </summary>
         /// <param name="entries"></param>
         /// <returns></returns>
-        async Task<long> IAsyncGeoHashSet.AddRangeAsync (IEnumerable<GeoEntry> entries) {
+        async Task<long> IAsyncGeoHashSet<RedisValue>.AddRangeAsync (IEnumerable<GeoEntry> entries) {
             return await Database.GeoAddAsync (SetKey, entries.ToArray ());
         }
 
-        async Task<bool> IAsyncGeoHashSet.RemoveAsync (RedisValue member) {
+        async Task<bool> IAsyncGeoHashSet<RedisValue>.RemoveAsync (RedisValue member) {
             return await Database.GeoRemoveAsync (SetKey, member);
         }
         #endregion
@@ -88,10 +88,10 @@ namespace Redis.Net {
         /// 批量删除
         /// </summary>
         /// <param name="batch"></param>
-        /// <param name="shipId"></param>
+        /// <param name="member"></param>
         /// <returns></returns>
-        Task IBatchGeoHashSet.BatchRemove (IBatch batch, string shipId) {
-            return batch.GeoRemoveAsync (SetKey, shipId);
+        Task IBatchGeoHashSet<RedisValue>.BatchRemove (IBatch batch, RedisValue member) {
+            return batch.GeoRemoveAsync (SetKey, member);
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace Redis.Net {
         /// <param name="batch"></param>
         /// <param name="entry"></param>
         /// <returns></returns>
-        Task IBatchGeoHashSet.BatchAdd (IBatch batch, GeoEntry entry) {
+        Task IBatchGeoHashSet<RedisValue>.BatchAdd (IBatch batch, GeoEntry entry) {
             return batch.GeoAddAsync (SetKey, entry);
         }
 
@@ -117,7 +117,7 @@ namespace Redis.Net {
         /// <param name="lat"></param>
         /// <param name="member"></param>
         /// <returns></returns>
-        Task IBatchGeoHashSet.BatchAdd (IBatch batch, double lng, double lat, RedisValue member) {
+        Task IBatchGeoHashSet<RedisValue>.BatchAdd (IBatch batch, double lng, double lat, RedisValue member) {
             return ((IBatchGeoHashSet) this).BatchAdd (batch, new GeoEntry (lng, lat, member));
         }
 

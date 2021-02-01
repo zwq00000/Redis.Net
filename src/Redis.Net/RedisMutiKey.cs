@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using StackExchange.Redis;
 
-namespace Redis.Net
-{
+namespace Redis.Net {
     /// <summary>
     /// Redis 多键 Set/Hashset 基类
     /// </summary>
@@ -13,6 +13,8 @@ namespace Redis.Net
         /// 默认 ShipTracks Redis Key 前缀
         /// </summary>
         public readonly RedisKey BaseKey;
+
+        private string _baseKeyString;
 
         protected IDatabase Database { get; }
 
@@ -25,6 +27,7 @@ namespace Redis.Net
                 baseKey = baseKey + ":";
             }
             this.BaseKey = baseKey;
+            _baseKeyString = BaseKey.ToString ();
         }
 
         /// <summary>
@@ -35,6 +38,20 @@ namespace Redis.Net
         /// <returns></returns>
         protected RedisKey GetSubKey (string id) {
             return BaseKey.Append (id);
+        }
+
+        /// <summary>
+        /// 根据 RedisKey 获取 Id,去除 <see cref="BaseKey" />
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        protected string GetId (RedisKey key) {
+            var keyStr = key.ToString ();
+            if (keyStr.StartsWith (_baseKeyString)) {
+                return keyStr.Substring (_baseKeyString.Length);
+            } else {
+                return keyStr;
+            }
         }
 
         protected bool Remove (string id) {
@@ -58,10 +75,27 @@ namespace Redis.Net
         }
 
         /// <summary>
+        /// 获取全部Id
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<string> GetIds () {
+            return GetKeys ().Select (k => GetId (k));
+        }
+
+        /// <summary>
+        /// 获取全部Id 的异步方法
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<string>> GetIdsAsync () {
+            var keys = await GetKeysAsync ();
+            return keys.Select (k => GetId (k));
+        }
+
+        /// <summary>
         /// 根据 <see cref="BaseKey"/> 查找全部 RedisKey 
         /// </summary>
         /// <returns></returns>
-        public RedisKey[] GetKeys () {
+        protected RedisKey[] GetKeys () {
             return Database.GetKeys (this.BaseKey);
         }
 
@@ -69,7 +103,7 @@ namespace Redis.Net
         /// 根据 <see cref="BaseKey"/> 查找全部 RedisKey 
         /// </summary>
         /// <returns></returns>
-        public async Task<RedisKey[]> GetKeysAsync () {
+        protected async Task<RedisKey[]> GetKeysAsync () {
             return await Database.GetKeysAsync (this.BaseKey);
         }
 

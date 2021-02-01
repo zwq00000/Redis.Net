@@ -15,7 +15,7 @@ namespace Redis.Net.Generic {
         /// Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1"></see>.
         /// </summary>
         Task IBatchHashSet<TKey, TValue>.BatchAdd (IBatch batch, TKey key, TValue value) {
-            return batch.HashSetAsync (SetKey, RedisValue.Unbox (key), RedisValue.Unbox (value));
+            return batch.HashSetAsync (SetKey, Unbox (key), Unbox (value));
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Redis.Net.Generic {
                 return Task.CompletedTask;
             }
 
-            var entities = tuples.Select (t => new HashEntry (RedisValue.Unbox (t.Item1), RedisValue.Unbox ((t.Item2))))
+            var entities = tuples.Select (t => new HashEntry (RedisValue.Unbox (t.Item1), Unbox (t.Item2)))
                 .ToArray ();
             return batch.HashSetAsync (SetKey, entities);
         }
@@ -39,7 +39,7 @@ namespace Redis.Net.Generic {
                 return Task.CompletedTask;
             }
 
-            var entities = tuples.Select (t => new HashEntry (RedisValue.Unbox (t.Key), RedisValue.Unbox ((t.Value))))
+            var entities = tuples.Select (t => new HashEntry (RedisValue.Unbox (t.Key), Unbox (t.Value)))
                 .ToArray ();
             return batch.HashSetAsync (SetKey, entities);
         }
@@ -51,7 +51,7 @@ namespace Redis.Net.Generic {
         /// <param name="key"></param>
         /// <returns></returns>
         Task<bool> IBatchHashSet<TKey, TValue>.BatchRemove (IBatch batch, TKey key) {
-            return batch.HashDeleteAsync (SetKey, RedisValue.Unbox (key));
+            return batch.HashDeleteAsync (SetKey, Unbox (key));
         }
 
         #endregion

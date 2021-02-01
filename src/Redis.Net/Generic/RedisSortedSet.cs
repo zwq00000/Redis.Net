@@ -23,7 +23,7 @@ namespace Redis.Net.Generic {
         /// <param name="score"></param>
         /// <returns></returns>
         public bool Add (TValue member, double score) {
-            return Database.SortedSetAdd (this.SetKey, RedisValue.Unbox (member), score);
+            return Database.SortedSetAdd (this.SetKey, Unbox (member), score);
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace Redis.Net.Generic {
         /// <param name="values"></param>
         /// <returns></returns>
         public long Add (params KeyValuePair<TValue, double>[] values) {
-            return Database.SortedSetAdd (this.SetKey, values.Select (kv => new SortedSetEntry (RedisValue.Unbox (kv.Key), kv.Value)).ToArray ());
+            return Database.SortedSetAdd (this.SetKey, values.Select (kv => new SortedSetEntry (Unbox (kv.Key), kv.Value)).ToArray ());
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace Redis.Net.Generic {
         /// <param name="members"></param>
         /// <returns></returns>
         public long Remove (params TValue[] members) {
-            return Database.SortedSetRemove (this.SetKey, members.Select (m => RedisValue.Unbox (m)).ToArray ());
+            return Database.SortedSetRemove (this.SetKey, members.Select (m => Unbox (m)).ToArray ());
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace Redis.Net.Generic {
         /// <param name="value"></param>
         /// <returns></returns>
         public double Increment (TValue member, double value) {
-            return Database.SortedSetIncrement (this.SetKey, RedisValue.Unbox (member), value);
+            return Database.SortedSetIncrement (this.SetKey, Unbox (member), value);
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace Redis.Net.Generic {
         /// <param name="value"></param>
         /// <returns></returns>
         public double Decrement (TValue member, double value) {
-            return Database.SortedSetDecrement (this.SetKey, RedisValue.Unbox (member), value);
+            return Database.SortedSetDecrement (this.SetKey, Unbox (member), value);
         }
 
         #endregion

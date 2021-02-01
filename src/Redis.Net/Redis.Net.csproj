@@ -4,30 +4,11 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Redis.Net</RootNamespace>
     <SharedFrameworkVersion>2.2.0</SharedFrameworkVersion>
-     <LangVersion>7.1</LangVersion>
+     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
-
-  <PropertyGroup>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>$(NoWarn);1591</NoWarn>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.2</Version>
-    <VersionSuffix>$(VersionSuffix)</VersionSuffix>
-    <Authors>zwq00000@hotmail.com</Authors>
-    <Company>XiGe Digi Tech CO.</Company>
-    <Product>CCHP.VTS</Product>
-    <Description>Redis Collections Warpper for .NetCore</Description>
-    <PackageProjectUrl>https://github.com/zwq00000/Redis.Net</PackageProjectUrl>
-    <PackageTags>Redis;.NetCore</PackageTags>
-    <RepositoryUrl>https://github.com/zwq00000/Redis.Net.git</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-  </PropertyGroup>
-
+  
   <ItemGroup>
     <PackageReference Include="StackExchange.Redis" Version="2.1.*" />
+    <PackageReference Include="System.Text.Json" Version="4.*" />
   </ItemGroup>
 </Project>

@@ -15,7 +15,7 @@ namespace Redis.Net.Generic {
         /// Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1"></see>.
         /// </summary>
         async Task IAsyncHashSet<TKey, TValue>.AddAsync (TKey key, TValue value) {
-            await Database.HashSetAsync (SetKey, RedisValue.Unbox (key), RedisValue.Unbox (value));
+            await Database.HashSetAsync (SetKey, Unbox (key), Unbox (value));
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Redis.Net.Generic {
                 return;
             }
 
-            var entities = tuples.Select (t => new HashEntry (RedisValue.Unbox (t.Item1), RedisValue.Unbox ((t.Item2))))
+            var entities = tuples.Select (t => new HashEntry (Unbox (t.Item1), Unbox (t.Item2)))
                 .ToArray ();
             await Database.HashSetAsync (SetKey, entities);
         }
@@ -39,7 +39,7 @@ namespace Redis.Net.Generic {
                 return;
             }
 
-            var entities = tuples.Select (t => new HashEntry (RedisValue.Unbox (t.Key), RedisValue.Unbox ((t.Value))))
+            var entities = tuples.Select (t => new HashEntry (Unbox (t.Key), Unbox (t.Value)))
                 .ToArray ();
             await Database.HashSetAsync (SetKey, entities);
         }
@@ -50,38 +50,38 @@ namespace Redis.Net.Generic {
         /// <param name="key"></param>
         /// <returns></returns>
         async Task<bool> IAsyncHashSet<TKey, TValue>.RemoveAsync (TKey key) {
-            return await Database.HashDeleteAsync (SetKey, RedisValue.Unbox (key));
+            return await Database.HashDeleteAsync (SetKey, Unbox (key));
         }
 
-        /// <summary>
-        /// 指定字段递减的异步方法
-        /// </summary>
-        /// <param name="hashField"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        async Task<long> IAsyncHashSet<TKey, TValue>.DecrementAsync (TKey hashField, long value) {
-            return await Database.HashDecrementAsync (this.SetKey, RedisValue.Unbox (hashField), value);
-        }
+        // /// <summary>
+        // /// 指定字段递减的异步方法
+        // /// </summary>
+        // /// <param name="hashField"></param>
+        // /// <param name="value"></param>
+        // /// <returns></returns>
+        // async Task<long> IAsyncHashSet<TKey, TValue>.DecrementAsync (TKey hashField, long value) {
+        //     return await Database.HashDecrementAsync (this.SetKey, ToRedisValue (hashField), value);
+        // }
 
-        /// <summary>
-        /// 指定字段递减的异步方法
-        /// </summary>
-        /// <param name="hashField"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        async Task<double> IAsyncHashSet<TKey, TValue>.DecrementAsync (TKey hashField, double value) {
-            return await Database.HashDecrementAsync (this.SetKey, RedisValue.Unbox (hashField), value);
-        }
+        // /// <summary>
+        // /// 指定字段递减的异步方法
+        // /// </summary>
+        // /// <param name="hashField"></param>
+        // /// <param name="value"></param>
+        // /// <returns></returns>
+        // async Task<double> IAsyncHashSet<TKey, TValue>.DecrementAsync (TKey hashField, double value) {
+        //     return await Database.HashDecrementAsync (this.SetKey, ToRedisValue (hashField), value);
+        // }
 
-        /// <summary>
-        /// 指定字段递增的异步方法
-        /// </summary>
-        /// <param name="hashField"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        async Task<double> IAsyncHashSet<TKey, TValue>.IncrementAsync (TKey hashField, double value) {
-            return await Database.HashIncrementAsync (this.SetKey, RedisValue.Unbox (hashField), value);
-        }
+        // /// <summary>
+        // /// 指定字段递增的异步方法
+        // /// </summary>
+        // /// <param name="hashField"></param>
+        // /// <param name="value"></param>
+        // /// <returns></returns>
+        // async Task<double> IAsyncHashSet<TKey, TValue>.IncrementAsync (TKey hashField, double value) {
+        //     return await Database.HashIncrementAsync (this.SetKey, ToRedisValue (hashField), value);
+        // }
 
         #endregion
     }

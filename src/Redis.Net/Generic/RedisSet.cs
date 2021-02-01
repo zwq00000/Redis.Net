@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using StackExchange.Redis;
 
-namespace Redis.Net.Generic {
+namespace Redis.Net.Generic
+{
     /// <summary>
     /// Redis Set 集合
     /// </summary>
@@ -21,12 +22,12 @@ namespace Redis.Net.Generic {
         /// <param name="value"></param>
         /// <returns></returns>
         public async Task<long> AddAsync (params TValue[] value) {
-            return await Database.SetAddAsync (SetKey, Array.ConvertAll (value, v => RedisValue.Unbox (v)));
+            return await Database.SetAddAsync (SetKey, Array.ConvertAll (value, v => Unbox (v)));
         }
 
         /// <inheritdoc />
         public void Add (TValue item) {
-            Database.SetAdd (SetKey, RedisValue.Unbox (item));
+            Database.SetAdd (SetKey, Unbox (item));
         }
 
         /// <summary>
@@ -41,7 +42,7 @@ namespace Redis.Net.Generic {
 
         /// <inheritdoc />
         public bool Remove (TValue value) {
-            return Database.SetRemove (SetKey, RedisValue.Unbox (value));
+            return Database.SetRemove (SetKey, Unbox (value));
         }
 
         public long RemoveRange (TValue[] items) {
@@ -57,7 +58,7 @@ namespace Redis.Net.Generic {
 
         public async Task<long> RemoveAsync (params TValue[] items) {
             if (items.Length == 1) {
-                return await Database.SetRemoveAsync (SetKey, RedisValue.Unbox (items[0])) ? 1 : 0;
+                return await Database.SetRemoveAsync (SetKey, Unbox (items[0])) ? 1 : 0;
             }
             RedisValue[] values = Array.ConvertAll (items, Unbox);
             return await Database.SetRemoveAsync (SetKey, values);
@@ -83,7 +84,7 @@ namespace Redis.Net.Generic {
         #region Batch
 
         Task<long> IBatchSet<TValue>.BatchAdd (IBatch batch, params TValue[] values) {
-            return batch.SetAddAsync (this.SetKey, Array.ConvertAll (values, v => RedisValue.Unbox (v)));
+            return batch.SetAddAsync (this.SetKey, Array.ConvertAll (values, v => Unbox (v)));
         }
 
         /// <summary>
@@ -94,7 +95,7 @@ namespace Redis.Net.Generic {
         /// <returns>The number of members that were removed from the set, not including non existing members.</returns>
         /// <remarks>https://redis.io/commands/srem</remarks>
         Task<long> IBatchSet<TValue>.BatchRemove (IBatch batch, params TValue[] values) {
-            return batch.SetRemoveAsync (this.SetKey, Array.ConvertAll (values, v => RedisValue.Unbox (v)));
+            return batch.SetRemoveAsync (this.SetKey, Array.ConvertAll (values, v => Unbox (v)));
         }
 
         /// <summary>
@@ -116,4 +117,5 @@ namespace Redis.Net.Generic {
             return this;
         }
     }
+
 }

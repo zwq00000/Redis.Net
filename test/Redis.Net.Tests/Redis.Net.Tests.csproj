@@ -1,12 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MsgPack.Cli" Version="1.0.1" />
+    <PackageReference Include="System.Text.Json" Version="4.7.*" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
@@ -15,6 +17,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Redis.Net\Redis.Net.csproj" />
+    <ProjectReference Include="..\..\src\Redis.Net.Serializer.NewtonsoftJson\Redis.Net.Serializer.NewtonsoftJson.csproj" />
+    <ProjectReference Include="..\..\src\Redis.Net.Serializer.MsgPack\Redis.Net.Serializer.MsgPack.csproj" />
   </ItemGroup>
 
 </Project>

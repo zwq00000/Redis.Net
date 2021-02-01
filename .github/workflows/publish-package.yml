@@ -3,7 +3,7 @@ name: publish package
 on:
   push:
     branches:
-    - master
+    - develop
 
 jobs:
   build:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet: [ '2.2.103']
+        dotnet: [ '3.1.x']
     steps:
     - uses: actions/checkout@v1
     - name: Setup .NET Core
@@ -21,6 +21,17 @@ jobs:
     - name: Build with dotnet
       run: dotnet build --configuration Release
     - name: Package
-      run: dotnet pack src/Redis.Net -o ../../publish/ --include-symbols --force -c Release
+      run: |
+        subversion=`date +%Y%m%d-%H%m`
+        echo $subversion
+        dotnet pack src/Redis.Net -o ../../publish/ --include-symbols -c Release -p:PackageVersion=1.0.5-ci-$subversion
+        dotnet pack src/Redis.Net.Serializer.NewtonsoftJson -o ../../publish/ --include-symbols -c Release -p:PackageVersion=1.0.5-ci-$subversion
+        dotnet pack src/Redis.Net.Serializer.MsgPack -o ../../publish/ --include-symbols -c Release -p:PackageVersion=1.0.5-ci-$subversion
+        dotnet pack src/Redis.Net.Serializer.Json -o ../../publish/ --include-symbols -c Release -p:PackageVersion=1.0.5-ci-$subversion
+        
     - name: publish nuget
-      run: dotnet nuget push ./publish/Redis.Net.*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
+      run: |
+        dotnet nuget push /home/runner/work/publish/Redis.Net.*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
+        dotnet nuget push /home/runner/work/publish/Redis.Net.Serializer.NewtonsoftJson.*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
+        dotnet nuget push /home/runner/work/publish/Redis.Net.Serializer.MsgPack.*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
+        dotnet nuget push /home/runner/work/publish/Redis.Net.Serializer.Json.*.nupkg -k ${{secrets.nuget_apikey}} -s nuget.org
