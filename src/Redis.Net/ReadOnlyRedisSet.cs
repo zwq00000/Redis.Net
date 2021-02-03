@@ -9,7 +9,7 @@ namespace Redis.Net {
     /// </summary>
     public class ReadOnlyRedisSet : AbstracRedisKey, IReadOnlyCollection<RedisValue> {
 
-        protected ReadOnlyRedisSet (IDatabase database, string setKey) : base (database, setKey, RedisType.Set) { }
+        public ReadOnlyRedisSet (IDatabase database, string setKey) : base (database, setKey, RedisType.Set) { }
 
         /// <summary>Gets an <see cref="T:System.Collections.Generic.ICollection`1"></see> containing the keys of the <see cref="T:System.Collections.Generic.IDictionary`2"></see>.</summary>
         /// <returns>An <see cref="T:System.Collections.Generic.ICollection`1"></see> containing the keys of the object that implements <see cref="T:System.Collections.Generic.IDictionary`2"></see>.</returns>
@@ -72,6 +72,20 @@ namespace Redis.Net {
         /// <returns></returns>
         public IEnumerable<RedisValue> Scan (RedisValue pattern = default, int pageSize = 10, long cursor = 0, int pageOffset = 0) {
             return Database.SetScan (SetKey, pattern, pageSize, cursor, pageOffset);
+        }
+
+
+                /// <summary>
+        /// The SSCAN command is used to incrementally iterate over set; note: to resume an iteration via <i>cursor</i>,
+        ///  cast the original enumerable or enumerator to <i>IScanningCursor</i>.
+        /// </summary>
+        /// <param name="pattern"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="cursor"></param>
+        /// <param name="pageOffset"></param>
+        /// <returns></returns>
+        public IAsyncEnumerable<RedisValue> ScanAsync (RedisValue pattern = default, int pageSize = 10, long cursor = 0, int pageOffset = 0) {
+            return Database.SetScanAsync (SetKey, pattern, pageSize, cursor, pageOffset);
         }
 
         #region Implementation of IEnumerable

@@ -13,6 +13,50 @@ namespace Redis.Net {
         }
 
         /// <summary>
+        /// 获取 GeoHash 字符串
+        /// </summary>
+        /// <param name="member"></param>
+        /// <returns></returns>
+        public string GetGeoHash (RedisValue member) {
+            return Database.GeoHash (SetKey, member);
+        }
+
+        /// <summary>
+        /// 获取 GeoHash 字符串
+        /// </summary>
+        /// <param name="members"></param>
+        /// <returns></returns>
+        public string[] GetGeoHash (RedisValue[] members) {
+            return Database.GeoHash (SetKey, members);
+        }
+
+        /// <summary>
+        /// 异步 获取 GeoHash 字符串
+        /// </summary>
+        /// <remarks>
+        /// Return valid Geohash strings representing the position of one or more elements 
+        /// in a sorted set value representing a geospatial index (where elements were added using GEOADD).
+        /// </remarks>
+        /// <param name="member"></param>
+        /// <returns></returns>
+        public async Task<string> GetGeoHashAsync (RedisValue member) {
+            return await Database.GeoHashAsync (SetKey, member);
+        }
+
+        /// <summary>
+        /// 异步 获取 GeoHash 字符串
+        /// </summary>
+        /// <remarks>
+        /// Return valid Geohash strings representing the position of one or more elements 
+        /// in a sorted set value representing a geospatial index (where elements were added using GEOADD).
+        /// </remarks>
+        /// <param name="members"></param>
+        /// <returns></returns>
+        public async Task<string[]> GetGeoHashAsync (RedisValue[] members) {
+            return await Database.GeoHashAsync (SetKey, members);
+        }
+
+        /// <summary>
         /// 获取成员位置
         /// Return the positions (longitude,latitude) of all the specified members of the geospatial index represented by the sorted set at key.
         /// </summary>

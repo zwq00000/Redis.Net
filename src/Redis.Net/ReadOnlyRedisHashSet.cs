@@ -101,6 +101,32 @@ namespace Redis.Net {
         public async Task<long> CountAsync () {
             return await Database.HashLengthAsync (SetKey);
         }
+
+        /// <summary>
+        /// The HSCAN command is used to incrementally iterate over a hash; note: to resume an iteration via cursor, cast the original enumerable or enumerator to IScanningCursor.
+        /// </summary>
+        /// <param name="pattern">The pattern of keys to get entries for.</param>
+        /// <param name="pageSize">The page size to iterate by.</param>
+        /// <param name="cursor">The cursor position to start at.</param>
+        /// <param name="pageOffset">The page offset to start at.</param>
+        /// <param name="flags">The flags to use for this operation.</param>
+        /// <returns></returns>
+        public IEnumerable<HashEntry> Scan (RedisValue pattern = default, int pageSize = 250, long cursor = 0, int pageOffset = 0, CommandFlags flags = CommandFlags.None) {
+            return Database.HashScan (SetKey, pattern, pageSize, cursor, pageOffset, flags);
+        }
+
+        /// <summary>
+        /// The HSCAN command is used to incrementally iterate over a hash; note: to resume an iteration via cursor, cast the original enumerable or enumerator to IScanningCursor.
+        /// </summary>
+        /// <param name="pattern">The pattern of keys to get entries for.</param>
+        /// <param name="pageSize">The page size to iterate by.</param>
+        /// <param name="cursor">The cursor position to start at.</param>
+        /// <param name="pageOffset">The page offset to start at.</param>
+        /// <param name="flags">The flags to use for this operation.</param>
+        /// <returns></returns>
+        public IAsyncEnumerable<HashEntry> ScanAsync (RedisValue pattern = default, int pageSize = 250, long cursor = 0, int pageOffset = 0, CommandFlags flags = CommandFlags.None) {
+            return Database.HashScanAsync (SetKey, pattern, pageSize, cursor, pageOffset, flags);
+        }
         #endregion
 
         #region Implementation of IEnumerable

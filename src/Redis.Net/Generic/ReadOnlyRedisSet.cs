@@ -24,6 +24,14 @@ namespace Redis.Net.Generic {
             return RedisConvertFactory.ToRedisValue (value);
         }
 
+        /// <summary>
+        /// 返回非泛型 HashSet
+        /// </summary>
+        /// <returns></returns>
+        public ReadOnlyRedisSet GetNormal () {
+            return new ReadOnlyRedisSet (this.Database, this.SetKey);
+        }
+
         public int Count => (int) Database.SetLength (SetKey);
 
         /// <summary>
