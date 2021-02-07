@@ -48,6 +48,14 @@ namespace Redis.Net.Generic {
             this._valueConvert = valueConvert;
         }
 
+        /// <summary>
+        /// 返回非泛型 HashSet
+        /// </summary>
+        /// <returns></returns>
+        public ReadOnlyRedisHashSet GetNormal(){
+            return new ReadOnlyRedisHashSet(this.Database,this.SetKey);
+        }
+
         protected TKey ConvertKey (RedisValue key) {
             return (TKey) ((IConvertible) key).ToType (KeyType, CultureInfo.CurrentCulture);
         }

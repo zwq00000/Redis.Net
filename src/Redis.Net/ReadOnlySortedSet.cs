@@ -63,6 +63,18 @@ namespace Redis.Net {
         }
 
         /// <summary>
+        /// 扫描集合的异步方法
+        /// </summary>
+        /// <param name="pattern"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="cursor"></param>
+        /// <param name="pageOffset"></param>
+        /// <returns></returns>
+        public IAsyncEnumerable<SortedSetEntry> ScanAsync (RedisValue pattern = default, int pageSize = 10, long cursor = 0, int pageOffset = 0) {
+            return Database.SortedSetScanAsync (SetKey, pattern, pageSize, cursor, pageOffset);
+        }
+
+        /// <summary>
         /// Returns the specified range of elements in the sorted set stored at key. By default the elements are considered to be ordered from the lowest to the highest score. Lexicographical order is used for elements with equal score.
         /// Start and stop are used to specify the min and max range for score values. Similar to other range methods the values are inclusive.
         /// </summary>
